@@ -2,6 +2,7 @@
 """Base settings to build other settings files upon."""
 
 from pathlib import Path
+from oscar.defaults import *
 
 import environ
 
@@ -69,6 +70,40 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+
+    'django.contrib.flatpages',
+
+    'oscar.config.Shop',
+    'oscar.apps.analytics.apps.AnalyticsConfig',
+    'oscar.apps.checkout.apps.CheckoutConfig',
+    'oscar.apps.address.apps.AddressConfig',
+    'oscar.apps.shipping.apps.ShippingConfig',
+    'oscar.apps.catalogue.apps.CatalogueConfig',
+    'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
+    'oscar.apps.communication.apps.CommunicationConfig',
+    'oscar.apps.partner.apps.PartnerConfig',
+    'oscar.apps.basket.apps.BasketConfig',
+    'oscar.apps.payment.apps.PaymentConfig',
+    'oscar.apps.offer.apps.OfferConfig',
+    'oscar.apps.order.apps.OrderConfig',
+    'oscar.apps.customer.apps.CustomerConfig',
+    'oscar.apps.search.apps.SearchConfig',
+    'oscar.apps.voucher.apps.VoucherConfig',
+    'oscar.apps.wishlists.apps.WishlistsConfig',
+    'oscar.apps.dashboard.apps.DashboardConfig',
+    'oscar.apps.dashboard.reports.apps.ReportsDashboardConfig',
+    'oscar.apps.dashboard.users.apps.UsersDashboardConfig',
+    'oscar.apps.dashboard.orders.apps.OrdersDashboardConfig',
+    'oscar.apps.dashboard.catalogue.apps.CatalogueDashboardConfig',
+    'oscar.apps.dashboard.offers.apps.OffersDashboardConfig',
+    'oscar.apps.dashboard.partners.apps.PartnersDashboardConfig',
+    'oscar.apps.dashboard.pages.apps.PagesDashboardConfig',
+    'oscar.apps.dashboard.ranges.apps.RangesDashboardConfig',
+    'oscar.apps.dashboard.reviews.apps.ReviewsDashboardConfig',
+    'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
+    'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
+    'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
+
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -81,10 +116,18 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+
+    # 3rd-party apps that oscar depends on
+    'widget_tweaks',
+    'haystack',
+    'treebeard',
+    'sorl.thumbnail',   # Default thumbnail backend, can be replaced
+    'django_tables2',
 ]
 
 LOCAL_APPS = [
     "newhire.users",
+    "newhire.blog",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -101,6 +144,8 @@ MIGRATION_MODULES = {"sites": "newhire.contrib.sites.migrations"}
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+
+    'oscar.apps.customer.auth_backends.EmailBackend',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
@@ -143,6 +188,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+
+    'oscar.apps.basket.middleware.BasketMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 # STATIC
@@ -189,6 +237,11 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "newhire.users.context_processors.allauth_settings",
+                # oscar templates context processors
+                'oscar.apps.search.context_processors.search_form',
+                'oscar.apps.checkout.context_processors.checkout',
+                'oscar.apps.communication.notifications.context_processors.notifications',
+                'oscar.core.context_processors.metadata',
             ],
         },
     },
@@ -310,3 +363,9 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}

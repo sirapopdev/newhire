@@ -36,3 +36,8 @@ logs *args:
 # manage: Executes `manage.py` command.
 manage +args:
     @docker compose run --rm django python ./manage.py {{args}}
+
+# restart: Restart containers.
+restart:
+    @echo "Restarting containers..."
+    @docker compose restart

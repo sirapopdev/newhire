@@ -8,8 +8,10 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
+from django.apps import apps
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
         "about/",
@@ -22,6 +24,9 @@ urlpatterns = [
     path("users/", include("newhire.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+
+    path('', include(apps.get_app_config('oscar').urls[0])),
+
     # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),

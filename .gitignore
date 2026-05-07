@@ -275,3 +275,5 @@ newhire/media/
 .env
 .envs/*
 !.envs/.local/
+
+.vscode/

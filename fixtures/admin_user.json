@@ -1,0 +1,18 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "argon2$argon2id$v=19$m=102400,t=2,p=8$TmdLZGhYakZPN3lJMHlGbUFPejJZbg$n4A6Av6Gcp/PKnIimubtNI4j7SOTGdpSh2CyWGsR8LY",
+      "last_login": "2026-05-07T07:47:03.736Z",
+      "is_superuser": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-05-07T07:46:53.328Z",
+      "name": "",
+      "email": "sirapop.dev@gmail.com",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

@@ -123,6 +123,9 @@ THIRD_PARTY_APPS = [
     'treebeard',
     'sorl.thumbnail',   # Default thumbnail backend, can be replaced
     'django_tables2',
+
+    'faker',
+    'faker_commerce',
 ]
 
 LOCAL_APPS = [

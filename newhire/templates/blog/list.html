@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% load image_tags %}
+
+
+{% block title %}
+Blog
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    {% for post in object_list %}
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.body }}</p>
+    {% endfor %}
+</div>
+{% endblock %}

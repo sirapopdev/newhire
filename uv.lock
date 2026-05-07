@@ -832,6 +832,18 @@ wheels = [
 ]
 
 [[package]]
+name = "faker-commerce"
+version = "1.0.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "faker" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/db/af/02de5839967ec49d24d825664b0740e0e2dc278ff24f05f24d7d9bfdbe76/faker-commerce-1.0.4.tar.gz", hash = "sha256:f53da04143ab70754493fa97c0c64f5208c8f8f3c50273516ee3cafcea372953", size = 3076, upload-time = "2024-04-04T10:34:48.264Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6c/7b/f6d3f054a77ea48caaec8170bceac71c0aec54d94729b9f66ebd1fcc8fe1/faker_commerce-1.0.4-py3-none-any.whl", hash = "sha256:6780fe30801aac399a64d421cd85c4593f7cd54d838cb400e8d31e463722622c", size = 3279, upload-time = "2024-04-04T10:34:46.811Z" },
+]
+
+[[package]]
 name = "fido2"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1227,6 +1239,7 @@ dependencies = [
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
     { name = "faker" },
+    { name = "faker-commerce" },
     { name = "gunicorn" },
     { name = "hiredis" },
     { name = "markdown" },
@@ -1277,6 +1290,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = "==3.17.1" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
     { name = "faker", specifier = ">=40.15.0" },
+    { name = "faker-commerce", specifier = ">=1.0.4" },
     { name = "gunicorn", specifier = "==25.3.0" },
     { name = "hiredis", specifier = "==3.3.1" },
     { name = "markdown", specifier = ">=3.10.2" },

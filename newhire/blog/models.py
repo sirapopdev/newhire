@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.templatetags.static import static
 from oscar.models.fields import AutoSlugField
 
 # Create your models here.
@@ -48,8 +49,7 @@ class Post(models.Model):
         if self.featured_image:
             return self.featured_image.url
 
-        return '/static/images/no-image.png'
-    
+        return static('images/no-image.png')
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

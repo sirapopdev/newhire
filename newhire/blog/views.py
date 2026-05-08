@@ -3,19 +3,16 @@ from django.db.models import Q
 from .models import Category, Post, Tag
 from .forms import PostFilterForm
 
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/list.html'
+    paginate_by = 10
 
-class BlogSidebarContextMixin:
     def get_blog_sidebar_context(self):
         return {
             'blog_categories': Category.objects.all(),
             'recent_posts': Post.objects.all()[:5],
         }
-
-
-class PostListView(BlogSidebarContextMixin, ListView):
-    model = Post
-    template_name = 'blog/list.html'
-    paginate_by = 10
 
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET)

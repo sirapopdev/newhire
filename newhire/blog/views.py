@@ -74,14 +74,8 @@ class TagPostListView(PostListView):
         return context
 
 
-class PostDetailView(BlogSidebarContextMixin, DetailView):
+class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(self.get_blog_sidebar_context())
-        context['form'] = PostFilterForm(self.request.GET)
-        return context

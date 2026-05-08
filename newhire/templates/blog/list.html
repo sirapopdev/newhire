@@ -9,6 +9,7 @@ Blog
 
 {% block extrastyles %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'css/blog/nav.css' %}">
 <link rel="stylesheet" href="{% static 'css/blog/list.css' %}">
 {% endblock %}
 
@@ -16,8 +17,28 @@ Blog
 Blog
 {% endblock %}
 
+
 {% block subheader %}
 <p>Read the latest articles, ideas, and updates from our team.</p>
+{% if selected_category_slug %}
+<span class="blog-chip blog-chip--category">
+    Category: {{ selected_category_slug|title }}
+    <a class="blog-chip__clear" href="{% url 'post-list' %}" aria-label="Clear category">
+        ×
+    </a>
+</span>
+
+{% endif %}
+
+{% if selected_tag_slug %}
+<span class="blog-chip blog-chip--tag">
+    Tag: {{ selected_tag_slug|title }}
+    <a class="blog-chip__clear" href="{% url 'post-list' %}" aria-label="Clear tag">
+        ×
+    </a>
+</span>
+{% endif %}
+
 {% endblock %}
 
 {% block content %}
@@ -32,9 +53,11 @@ Blog
             <div class="blog-card__body">
                 <div class="blog-card__meta">
                     {% if post.category %}
-                    <span class="blog-card__category">{{ post.category.name }}</span>
+                    <a class="blog-card__category" href="{% url 'post-category' post.category.slug %}">
+                        {{ post.category.name }}
+                    </a>
                     {% endif %}
-                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                    <span>{{ post.updated_at|date:"M d, Y" }}</span>
                     {% if post.author %}
                     <span>By {{ post.author }}</span>
                     {% endif %}
@@ -48,7 +71,7 @@ Blog
                 {% if post.tags.all %}
                 <div class="blog-tags" aria-label="Post tags">
                     {% for tag in post.tags.all %}
-                    <span class="blog-tag">{{ tag.name }}</span>
+                    <a class="blog-tag" href="{% url 'post-tag' tag.slug %}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -66,7 +89,8 @@ Blog
         {% endif %}
 
         <span class="blog-pagination__current">
-            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{ total }}{% endblocktrans %}
+            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{
+            total }}{% endblocktrans %}
         </span>
 
         {% if page_obj.has_next %}

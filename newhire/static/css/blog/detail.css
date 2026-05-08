@@ -36,6 +36,13 @@
 .post-detail__category {
     color: #0f766e;
     font-weight: 700;
+    text-decoration: none;
+}
+
+.post-detail__category:hover,
+.post-detail__category:focus {
+    color: #115e59;
+    text-decoration: underline;
 }
 
 .post-detail h1 {
@@ -78,6 +85,14 @@
     color: #374151;
     font-size: 0.82rem;
     line-height: 1.2;
+    text-decoration: none;
+}
+
+.post-tag:hover,
+.post-tag:focus {
+    border-color: #0f766e;
+    color: #0f766e;
+    text-decoration: none;
 }
 
 .post-comments {

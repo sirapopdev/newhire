@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'post-list' %}">
+    <!-- <input type="hidden" name="category" value="{{ selected_category_slug }}">
+    <input class="form-control mr-sm-2" name="q" id="id_q" placeholder="{% trans 'Search' %}"
+        aria-label="{% trans 'Search' %}"> -->
+    {{ form.q }}
+    {{ form.category.as_hidden }}
+    <button class="btn btn btn-secondary my-2 my-sm-0" type="submit">{% trans "Search" %}</button>
+</form>

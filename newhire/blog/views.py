@@ -1,5 +1,6 @@
 from django.views.generic import DetailView, ListView
-from .models import Post
+from .models import Category, Post, Tag
+from .forms import PostFilterForm
 
 
 # Create your views here.
@@ -8,9 +9,73 @@ class PostListView(ListView):
     template_name = 'blog/list.html'
     paginate_by = 10
 
+    def get_queryset(self):
+        self.form = PostFilterForm(self.request.GET or None)
+        posts = Post.objects.all()
+       
+        if self.form.is_valid():
+            category_slug = self.form.cleaned_data.get('category')
+            query = self.form.cleaned_data.get('q')
+
+            if category_slug:
+                posts = posts.filter(category__slug=category_slug)
+
+            if query:
+                posts = posts.filter(title__icontains=query)
+
+        return posts
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['blog_categories'] = Category.objects.all()
+        context['selected_category_slug'] = self.request.GET.get('category', '')
+        context['selected_tag_slug'] = ''
+        context['form'] = self.form
+        return context
+
+
+
+class CategoryPostListView(PostListView):
+    def get_queryset(self):
+        self.form = PostFilterForm(self.request.GET or None)
+        posts = Post.objects.filter(category__slug=self.kwargs['slug'])
+        if self.form.is_valid():
+            query = self.form.cleaned_data.get('q')
+            if query:
+                posts = posts.filter(title__icontains=query)
+
+        return posts
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_category_slug'] = self.kwargs['slug']
+        return context
+
+
+class TagPostListView(PostListView):
+    def get_queryset(self):
+        self.form = PostFilterForm(self.request.GET or None)
+        posts = Post.objects.filter(tags__slug=self.kwargs['slug'])
+
+        if self.form.is_valid():
+            query = self.form.cleaned_data.get('q')
+            if query:
+                posts = posts.filter(title__icontains=query)
+
+        return posts
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_tag_slug'] = self.kwargs['slug']
+        return context
 
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['blog_categories'] = Category.objects.all()
+        return context

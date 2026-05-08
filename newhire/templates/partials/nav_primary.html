@@ -32,10 +32,18 @@
     {% block navbar_collapse %}
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         {% block nav %}
+        {% if blog_categories %}
+        <form class="blog-nav-filter form-inline mr-auto" action="{% url 'post-list' %}" method="get">
+            {{ form.category }}
+            {% if request.GET.q %}
+            <input type="hidden" name="q" value="{{ request.GET.q }}">
+            {% endif %}
+        </form>
+        {% endif %}
         {% endblock %}
 
         {% block nav_extra %}
-        {% include "oscar/partials/search.html" %}
+        {% include "partials/search.html" %}
         {% endblock %}
     </div>
     {% endblock %}

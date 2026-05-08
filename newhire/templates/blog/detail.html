@@ -9,6 +9,7 @@
 
 {% block extrastyles %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'css/blog/nav.css' %}">
 <link rel="stylesheet" href="{% static 'css/blog/detail.css' %}">
 {% endblock %}
 
@@ -21,7 +22,7 @@
     <header class="post-detail__header">
         <div class="post-detail__meta">
             {% if object.category %}
-            <span class="post-detail__category">{{ object.category.name }}</span>
+            <a class="post-detail__category" href="{% url 'post-category' object.category.slug %}">{{ object.category.name }}</a>
             {% endif %}
             <span>{{ object.created_at|date:"M d, Y" }}</span>
             {% if object.author %}
@@ -42,7 +43,7 @@
     {% if object.tags.all %}
     <div class="post-tags" aria-label="Post tags">
         {% for tag in object.tags.all %}
-        <span class="post-tag">{{ tag.name }}</span>
+        <a class="post-tag" href="{% url 'post-tag' tag.slug %}">{{ tag.name }}</a>
         {% endfor %}
     </div>
     {% endif %}

@@ -8,12 +8,6 @@ class PostListView(ListView):
     template_name = 'blog/list.html'
     paginate_by = 10
 
-    def get_blog_sidebar_context(self):
-        return {
-            'blog_categories': Category.objects.all(),
-            'recent_posts': Post.objects.all()[:5],
-        }
-
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET)
         posts = Post.objects.all()
@@ -31,7 +25,10 @@ class PostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(self.get_blog_sidebar_context())
+        context.update({
+            'blog_categories': Category.objects.all(),
+            'recent_posts': Post.objects.all()[:5],
+        })
         context['form'] = self.form
         return context
 

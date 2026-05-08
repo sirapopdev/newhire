@@ -28,7 +28,7 @@ class PostListView(BlogSidebarContextMixin, ListView):
                     Q(title__icontains=query) |
                     Q(body__icontains=query) |
                     Q(author__name__icontains=query) 
-                ).distinct()
+                )
 
         return posts
 

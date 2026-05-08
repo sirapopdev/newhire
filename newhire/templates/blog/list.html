@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load image_tags %}
 {% load static %}
@@ -85,18 +85,32 @@ Blog
     {% if is_paginated %}
     <nav class="blog-pagination" aria-label="Blog pagination">
         {% if page_obj.has_previous %}
-        <a class="blog-pagination__link" href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+            {% if page_obj.number > 2 %}
+            <a class="blog-pagination__link" href="?page=1">First page</a>
+            {% endif %}
+
+            <a class="blog-pagination__link" href="?page={{ page_obj.previous_page_number }}">
+                {% trans "Previous" %}
+            </a>
         {% endif %}
 
         <span class="blog-pagination__current">
-            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{
-            total }}{% endblocktrans %}
+            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}
+                Page {{ current }} of {{ total }}
+            {% endblocktrans %}
         </span>
 
         {% if page_obj.has_next %}
-        <a class="blog-pagination__link" href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+            <a class="blog-pagination__link" href="?page={{ page_obj.next_page_number }}">
+                {% trans "Next" %}
+            </a>
+
+            {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+            <a class="blog-pagination__link" href="?page={{ page_obj.paginator.num_pages }}">Last page</a>
+            {% endif %}
         {% endif %}
     </nav>
     {% endif %}
+
 </section>
 {% endblock %}

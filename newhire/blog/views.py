@@ -3,8 +3,15 @@ from .models import Category, Post, Tag
 from .forms import PostFilterForm
 
 
-# Create your views here.
-class PostListView(ListView):
+class BlogSidebarContextMixin:
+    def get_blog_sidebar_context(self):
+        return {
+            'blog_categories': Category.objects.all(),
+            'recent_posts': Post.objects.all()[:5],
+        }
+
+
+class PostListView(BlogSidebarContextMixin, ListView):
     model = Post
     template_name = 'blog/list.html'
     paginate_by = 10
@@ -12,13 +19,9 @@ class PostListView(ListView):
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET or None)
         posts = Post.objects.all()
-       
-        if self.form.is_valid():
-            category_slug = self.form.cleaned_data.get('category')
-            query = self.form.cleaned_data.get('q')
 
-            if category_slug:
-                posts = posts.filter(category__slug=category_slug)
+        if self.form.is_valid():
+            query = self.form.cleaned_data.get('q')
 
             if query:
                 posts = posts.filter(title__icontains=query)
@@ -27,11 +30,9 @@ class PostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['blog_categories'] = Category.objects.all()
-        context['selected_category_slug'] = self.request.GET.get('category', '')
+        context.update(self.get_blog_sidebar_context())
         context['form'] = self.form
         return context
-
 
 
 class CategoryPostListView(PostListView):
@@ -68,7 +69,8 @@ class TagPostListView(PostListView):
         context['selected_tag_slug'] = self.kwargs['slug']
         return context
 
-class PostDetailView(DetailView):
+
+class PostDetailView(BlogSidebarContextMixin, DetailView):
     model = Post
     template_name = 'blog/detail.html'
     slug_field = 'slug'
@@ -76,5 +78,6 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['blog_categories'] = Category.objects.all()
+        context.update(self.get_blog_sidebar_context())
+        context['form'] = PostFilterForm(self.request.GET or None)
         return context

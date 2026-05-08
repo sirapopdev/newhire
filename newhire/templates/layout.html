@@ -50,10 +50,6 @@
 {# Local scripts #}
 {% block scripts %}
 {{ block.super }}
-<!-- Twitter Bootstrap -->
-<script src="{% static 'oscar/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
-<!-- Oscar -->
-<script src="{% static 'oscar/js/oscar/ui.js' %}"></script>
 {% endblock %}
 
 {% block extrascripts %}
@@ -63,5 +59,4 @@
 
 {% block onbodyload %}
 {{ block.super }}
-oscar.init();
 {% endblock %}

@@ -11,19 +11,3 @@ class PostFilterForm(forms.Form):
             'placeholder': 'Search...'
         })
     )
-
-    category = forms.ChoiceField(
-        required=False,
-        choices=[],
-        widget=forms.Select(attrs={
-            "class": "blog-nav-filter__select form-control form-control-sm",
-            "aria-label": "Category",
-            "onchange": "this.form.submit()",
-        }), 
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        from .models import Category
-        categories = Category.objects.all()
-        self.fields['category'].choices = [('', 'All categories')] + [(cat.slug, cat.name) for cat in categories]

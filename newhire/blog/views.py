@@ -17,7 +17,7 @@ class PostListView(BlogSidebarContextMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        self.form = PostFilterForm(self.request.GET or None)
+        self.form = PostFilterForm(self.request.GET)
         posts = Post.objects.all()
 
         if self.form.is_valid():
@@ -37,7 +37,7 @@ class PostListView(BlogSidebarContextMixin, ListView):
 
 class CategoryPostListView(PostListView):
     def get_queryset(self):
-        self.form = PostFilterForm(self.request.GET or None)
+        self.form = PostFilterForm(self.request.GET)
         posts = Post.objects.filter(category__slug=self.kwargs['slug'])
         if self.form.is_valid():
             query = self.form.cleaned_data.get('q')
@@ -54,7 +54,7 @@ class CategoryPostListView(PostListView):
 
 class TagPostListView(PostListView):
     def get_queryset(self):
-        self.form = PostFilterForm(self.request.GET or None)
+        self.form = PostFilterForm(self.request.GET)
         posts = Post.objects.filter(tags__slug=self.kwargs['slug'])
 
         if self.form.is_valid():
@@ -79,5 +79,5 @@ class PostDetailView(BlogSidebarContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(self.get_blog_sidebar_context())
-        context['form'] = PostFilterForm(self.request.GET or None)
+        context['form'] = PostFilterForm(self.request.GET)
         return context

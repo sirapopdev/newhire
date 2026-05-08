@@ -64,8 +64,8 @@ Blog
                     </a>
                     {% endif %}
                     <span>{{ post.updated_at|date:"M d, Y" }}</span>
-                    {% if post.author %}
-                    <span>By {{ post.author }}</span>
+                    {% if post.author and post.author.name %}
+                    <span>By {{ post.author.name }}</span>
                     {% endif %}
                 </div>
 

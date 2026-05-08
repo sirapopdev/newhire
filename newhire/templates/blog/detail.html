@@ -28,8 +28,8 @@
             <a class="post-detail__category" href="{% url 'post-category' object.category.slug %}">{{ object.category.name }}</a>
             {% endif %}
             <span>{{ object.created_at|date:"M d, Y" }}</span>
-            {% if object.author %}
-            <span>By {{ object.author }}</span>
+            {% if object.author and object.author.name %}
+            <span>By {{ object.author.name }}</span>
             {% endif %}
         </div>
         <h1>{{ object.title }}</h1>
@@ -57,8 +57,8 @@
         {% for comment in object.comments.all %}
         <article class="post-comment">
             <div class="post-comment__meta">
-                {% if comment.author %}
-                <span>{{ comment.author }}</span>
+                {% if comment.author and comment.author.name %}
+                <span>{{ comment.author.name }}</span>
                 {% endif %}
                 <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
             </div>

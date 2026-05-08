@@ -12,13 +12,16 @@ Blog
 <link rel="stylesheet" href="{% static 'css/blog/list.css' %}">
 {% endblock %}
 
+{% block headertext %}
+Blog
+{% endblock %}
+
+{% block subheader %}
+<p>Read the latest articles, ideas, and updates from our team.</p>
+{% endblock %}
+
 {% block content %}
 <section class="blog-page">
-    <header class="blog-hero">
-        <h1>Blog</h1>
-        <p>Read the latest articles, ideas, and updates from our team.</p>
-    </header>
-
     <div class="blog-grid">
         {% for post in object_list %}
         <article class="blog-card">
@@ -55,5 +58,21 @@ Blog
         <p class="blog-empty">No blog posts have been published yet.</p>
         {% endfor %}
     </div>
+
+    {% if is_paginated %}
+    <nav class="blog-pagination" aria-label="Blog pagination">
+        {% if page_obj.has_previous %}
+        <a class="blog-pagination__link" href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+        {% endif %}
+
+        <span class="blog-pagination__current">
+            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} of {{ total }}{% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a class="blog-pagination__link" href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+        {% endif %}
+    </nav>
+    {% endif %}
 </section>
 {% endblock %}

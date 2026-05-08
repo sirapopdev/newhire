@@ -12,10 +12,12 @@
 <link rel="stylesheet" href="{% static 'css/blog/detail.css' %}">
 {% endblock %}
 
+{% block breadcrumbs %}
+<a class="post-detail__back" href="{% url 'post-list' %}">{% trans "Back to Blog" %}</a>
+{% endblock %}
+
 {% block content %}
 <article class="post-detail">
-    <a class="post-detail__back" href="{% url 'post-list' %}">{% trans "Back to Blog" %}</a>
-
     <header class="post-detail__header">
         <div class="post-detail__meta">
             {% if object.category %}
@@ -44,5 +46,25 @@
         {% endfor %}
     </div>
     {% endif %}
+
+    <section class="post-comments" aria-labelledby="comments-title">
+        <h2 id="comments-title">{% trans "Comments" %}</h2>
+
+        {% for comment in object.comments.all %}
+        <article class="post-comment">
+            <div class="post-comment__meta">
+                {% if comment.author %}
+                <span>{{ comment.author }}</span>
+                {% endif %}
+                <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
+            </div>
+            <div class="post-comment__body">
+                {{ comment.body|linebreaks }}
+            </div>
+        </article>
+        {% empty %}
+        <p class="post-comments__empty">{% trans "No comments yet." %}</p>
+        {% endfor %}
+    </section>
 </article>
 {% endblock %}

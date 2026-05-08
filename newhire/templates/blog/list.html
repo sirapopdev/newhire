@@ -56,7 +56,7 @@ Blog
             <div class="blog-card__body">
                 <div class="blog-card__meta">
                     {% if post.category %}
-                    <a class="blog-card__category" href="{% url 'post-category' post.category.slug %}">
+                    <a class="blog-card__category" href="{{ post.get_absolute_url }}">
                         {{ post.category.name }}
                     </a>
                     {% endif %}
@@ -67,7 +67,7 @@ Blog
                 </div>
 
                 <h2>
-                    <a class="blog-card__link" href="{% url 'post-detail' post.slug %}">{{ post.title }}</a>
+                    <a class="blog-card__link" href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                 </h2>
                 <p class="blog-card__excerpt">{{ post.body|striptags|truncatewords:34 }}</p>
 

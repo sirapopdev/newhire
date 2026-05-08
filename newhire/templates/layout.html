@@ -7,15 +7,16 @@
 
 {% block layout %}
 {# Top-horizontal bar with account, notifictions, dashboard links #}
-{% include "oscar/partials/nav_accounts.html" %}
+{% include "partials/nav_accounts.html" %}
 
 {# Site logo/title, mini-basket, browse dropdown and searchbox #}
 <header class="header container">
-    <div class="page_inner">
+    <!-- <div class="page_inner">
         <div class="row justify-content-between">
             {% include "oscar/partials/brand.html" %}
         </div>
-    </div>
+    </div> -->
+    <br>
     {% block navigation %}
     {% include "partials/nav_primary.html" %}
     {% endblock %}

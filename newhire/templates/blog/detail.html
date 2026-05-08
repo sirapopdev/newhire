@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% load image_tags %}
+{% load static %}
+
+{% block title %}
+{{ object.title }}
+{% endblock %}
+
+{% block extrastyles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/blog/detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<article class="post-detail">
+    <a class="post-detail__back" href="{% url 'post-list' %}">{% trans "Back to Blog" %}</a>
+
+    <header class="post-detail__header">
+        <div class="post-detail__meta">
+            {% if object.category %}
+            <span class="post-detail__category">{{ object.category.name }}</span>
+            {% endif %}
+            <span>{{ object.created_at|date:"M d, Y" }}</span>
+            {% if object.author %}
+            <span>By {{ object.author }}</span>
+            {% endif %}
+        </div>
+        <h1>{{ object.title }}</h1>
+    </header>
+
+    {% if object.featured_image %}
+    <img class="post-detail__image" src="{{ object.featured_image.url }}" alt="{{ object.title }}">
+    {% endif %}
+
+    <div class="post-detail__body">
+        {{ object.body|linebreaks }}
+    </div>
+
+    {% if object.tags.all %}
+    <div class="post-tags" aria-label="Post tags">
+        {% for tag in object.tags.all %}
+        <span class="post-tag">{{ tag.name }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</article>
+{% endblock %}

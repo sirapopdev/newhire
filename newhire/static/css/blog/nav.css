@@ -13,6 +13,10 @@
     min-width: 0;
 }
 
+.blog-layout--single {
+    grid-template-columns: 1fr;
+}
+
 .blog-sidebar {
     padding: 18px;
     border: 1px solid #e5e7eb;

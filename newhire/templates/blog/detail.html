@@ -17,7 +17,8 @@
 <a class="post-detail__back" href="{% url 'post-list' %}">{% trans "Back to Blog" %}</a>
 {% endblock %}
 
-{% block navigation %}{% endblock %}
+{% block content_layout_class %}blog-layout blog-layout--single{% endblock %}
+{% block sidebar %}{% endblock %}
 
 {% block content %}
 <article class="post-detail">

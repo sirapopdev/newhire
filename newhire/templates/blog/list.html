@@ -13,31 +13,37 @@ Blog
 <link rel="stylesheet" href="{% static 'css/blog/list.css' %}">
 {% endblock %}
 
+{% block breadcrumbs %}
+<nav class="blog-breadcrumb" aria-label="{% trans 'Blog navigation' %}">
+    {% if selected_category_slug %}
+    <a href="{% url 'post-list' %}">{% trans "Blog" %}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ selected_category_slug|title }}</span>
+    {% elif selected_tag_slug %}
+    <a href="{% url 'post-list' %}">{% trans "Blog" %}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ selected_tag_slug|title }}</span>
+    {% else %}
+    <span aria-current="page">{% trans "Blog" %}</span>
+    {% endif %}
+</nav>
+<br>
+{% endblock %}
+
+
 {% block headertext %}
-Blog
+{% if selected_category_slug %}
+{{ selected_category_slug|title }}
+{% elif selected_tag_slug %}
+{{ selected_tag_slug|title }}
+{% else %}
+{% trans "Blog" %}
+{% endif %}
 {% endblock %}
 
 
 {% block subheader %}
 <p>Read the latest articles, ideas, and updates from our team.</p>
-{% if selected_category_slug %}
-<span class="blog-chip blog-chip--category">
-    Category: {{ selected_category_slug|title }}
-    <a class="blog-chip__clear" href="{% url 'post-list' %}" aria-label="Clear category">
-        ×
-    </a>
-</span>
-
-{% endif %}
-
-{% if selected_tag_slug %}
-<span class="blog-chip blog-chip--tag">
-    Tag: {{ selected_tag_slug|title }}
-    <a class="blog-chip__clear" href="{% url 'post-list' %}" aria-label="Clear tag">
-        ×
-    </a>
-</span>
-{% endif %}
 
 {% endblock %}
 

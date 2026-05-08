@@ -55,7 +55,7 @@
       <div class="content">
         {% block subheader %}{% endblock subheader %}
 
-        <div class="blog-layout">
+        <div class="{% block content_layout_class %}blog-layout{% endblock %}">
           <main class="blog-layout__main" id="content_inner">
             {% block content %}{% endblock %}
           </main>

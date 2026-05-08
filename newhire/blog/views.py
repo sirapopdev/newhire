@@ -29,7 +29,6 @@ class PostListView(ListView):
         context = super().get_context_data(**kwargs)
         context['blog_categories'] = Category.objects.all()
         context['selected_category_slug'] = self.request.GET.get('category', '')
-        context['selected_tag_slug'] = ''
         context['form'] = self.form
         return context
 

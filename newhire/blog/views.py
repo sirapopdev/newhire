@@ -1,4 +1,5 @@
 from django.views.generic import DetailView, ListView
+from django.db.models import Q
 from .models import Category, Post, Tag
 from .forms import PostFilterForm
 
@@ -22,9 +23,13 @@ class PostListView(BlogSidebarContextMixin, ListView):
 
         if self.form.is_valid():
             query = self.form.cleaned_data.get('q')
-
             if query:
-                posts = posts.filter(title__icontains=query)
+                posts = posts.filter(
+                    Q(title__icontains=query) |
+                    Q(body__icontains=query) |
+                    Q(category__name__icontains=query) |
+                    Q(author__email__icontains=query) 
+                ).distinct()
 
         return posts
 

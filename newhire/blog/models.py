@@ -38,6 +38,13 @@ class Post(models.Model):
     
     class Meta:
         ordering = ['-updated_at']
+
+    @property
+    def featured_image_url(self):
+        if self.featured_image:
+            return self.featured_image.url
+
+        return '/static/images/no-image.png'
     
 
 class Comment(models.Model):

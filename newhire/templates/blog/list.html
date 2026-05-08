@@ -52,10 +52,7 @@ Blog
     <div class="blog-grid">
         {% for post in object_list %}
         <article class="blog-card">
-            {% if post.featured_image %}
-            <img class="blog-card__image" src="{{ post.featured_image.url }}" alt="{{ post.title }}">
-            {% endif %}
-
+            <img class="blog-card__image" src="{{ post.featured_image_url }}" alt="{{ post.title }}">
             <div class="blog-card__body">
                 <div class="blog-card__meta">
                     {% if post.category %}

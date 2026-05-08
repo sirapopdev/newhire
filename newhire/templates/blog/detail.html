@@ -35,9 +35,7 @@
         <h1>{{ object.title }}</h1>
     </header>
 
-    {% if object.featured_image %}
-    <img class="post-detail__image" src="{{ object.featured_image.url }}" alt="{{ object.title }}">
-    {% endif %}
+    <img class="post-detail__image" src="{{ object.featured_image_url }}" alt="{{ object.title }}">
 
     <div class="post-detail__body">
         {{ object.body|linebreaks }}

@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import CategoryPostListView, PostDetailView, PostListView, TagPostListView
 
+app_name = 'blogs'
+
 post_list_view = PostListView.as_view()
 category_post_list_view = CategoryPostListView.as_view()
 tag_post_list_view = TagPostListView.as_view()

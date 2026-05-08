@@ -16,11 +16,11 @@ Blog
 {% block breadcrumbs %}
 <nav class="blog-breadcrumb" aria-label="{% trans 'Blog navigation' %}">
     {% if selected_category_slug %}
-    <a href="{% url 'post-list' %}">{% trans "Blog" %}</a>
+    <a href="{% url 'blogs:post-list' %}">{% trans "Blog" %}</a>
     <span aria-hidden="true">/</span>
     <span aria-current="page">{{ selected_category_slug|title }}</span>
     {% elif selected_tag_slug %}
-    <a href="{% url 'post-list' %}">{% trans "Blog" %}</a>
+    <a href="{% url 'blogs:post-list' %}">{% trans "Blog" %}</a>
     <span aria-hidden="true">/</span>
     <span aria-current="page">{{ selected_tag_slug|title }}</span>
     {% else %}
@@ -74,7 +74,7 @@ Blog
                 {% if post.tags.all %}
                 <div class="blog-tags" aria-label="Post tags">
                     {% for tag in post.tags.all %}
-                    <a class="blog-tag" href="{% url 'post-tag' tag.slug %}">{{ tag.name }}</a>
+                    <a class="blog-tag" href="{% url 'blogs:post-tag' tag.slug %}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
                 {% endif %}

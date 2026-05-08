@@ -10,11 +10,11 @@
       <li class="{% if category.slug == selected_category_slug %}blog-sidebar__item--selected{% endif %}">
         {% if category.slug == selected_category_slug %}
         <span class="blog-sidebar__selected-label">{{ category.name }}</span>
-        <a class="blog-sidebar__clear" href="{% url 'post-list' %}" aria-label="{% trans 'Clear category' %}">
+        <a class="blog-sidebar__clear" href="{% url 'blogs:post-list' %}" aria-label="{% trans 'Clear category' %}">
           ×
         </a>
         {% else %}
-        <a href="{% url 'post-category' category.slug %}">{{ category.name }}</a>
+        <a href="{% url 'blogs:post-category' category.slug %}">{{ category.name }}</a>
         {% endif %}
       </li>
       {% endfor %}
@@ -28,7 +28,7 @@
     <ul class="blog-sidebar__list">
       {% for post in recent_posts %}
       <li>
-        <a href="{% url 'post-detail' post.slug %}">{{ post.title }}</a>
+        <a href="{% url 'blogs:post-detail' post.slug %}">{{ post.title }}</a>
       </li>
       {% endfor %}
     </ul>

@@ -1,96 +1,50 @@
+{% extends "oscar/base.html" %}
 {% load i18n %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:'en-gb' }}" class="{% block html_class %}no-js{% endblock %}">
 
-<head>
-  <title>{% block title %}{{ shop_name }} - {{ shop_tagline }}{% endblock %}</title>
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'oscar/css/styles.css' %}" />
+{% endblock %}
 
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <meta name="created" content="{% now 'jS M Y h:i' %}" />
-  <meta name="description" content="{% block description %}{% endblock %}" />
-  <meta name="viewport" content="{% block viewport %}width=device-width{% endblock %}" />
+{% block layout %}
+{% include "partials/nav_accounts.html" %}
 
-  {% block favicon %}
-  <link rel="shortcut icon" href="{% static 'oscar/favicon.ico' %}" />
+<header class="header container">
+  <br>
+  {% block navigation %}
+  {% include "partials/nav_primary.html" %}
   {% endblock %}
+</header>
 
-  {% block styles %}
-  <link rel="stylesheet" type="text/css" href="{% static 'oscar/css/styles.css' %}" />
-  {% endblock %}
+{% block content_wrapper %}
+<div class="container page">
+  <div class="page_inner">
+    {% block breadcrumbs %}{% endblock %}
 
-  {% block extrastyles %}{% endblock %}
-  {% block extrahead %}{% endblock %}
-
-  {% block tracking %}
-  {% include "oscar/partials/google_analytics.html" %}
-  {% endblock %}
-</head>
-
-<body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}default{% endblock %}">
-  {% block layout %}
-  {% include "partials/nav_accounts.html" %}
-
-  <header class="header container">
-    <br>
-    {% block navigation %}
-    {% include "partials/nav_primary.html" %}
+    {% block header %}
+    <div class="page-header">
+      <h1>{% block headertext %}{% endblock %}</h1>
+    </div>
     {% endblock %}
-  </header>
 
-  {% block content_wrapper %}
-  <div class="container page">
-    <div class="page_inner">
-      {% block breadcrumbs %}{% endblock %}
+    {% include "oscar/partials/alert_messages.html" %}
+    {% block subnavigation %}{% endblock %}
 
-      {% block header %}
-      <div class="page-header">
-        <h1>{% block headertext %}{% endblock %}</h1>
-      </div>
-      {% endblock %}
+    <div class="content">
+      {% block subheader %}{% endblock subheader %}
 
-      {% include "oscar/partials/alert_messages.html" %}
-      {% block subnavigation %}{% endblock %}
+      <div class="{% block content_layout_class %}blog-layout{% endblock %}">
+        <main class="blog-layout__main" id="content_inner">
+          {% block content %}{% endblock %}
+        </main>
 
-      <div class="content">
-        {% block subheader %}{% endblock subheader %}
-
-        <div class="{% block content_layout_class %}blog-layout{% endblock %}">
-          <main class="blog-layout__main" id="content_inner">
-            {% block content %}{% endblock %}
-          </main>
-
-          {% block sidebar %}
-          {% include "partials/blog_sidebar.html" %}
-          {% endblock %}
-        </div>
+        {% block sidebar %}
+        {% include "partials/blog_sidebar.html" %}
+        {% endblock %}
       </div>
     </div>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}
 
-  {% block footer %}
-  {% include "oscar/partials/footer.html" %}
-  {% endblock %}
-  {% endblock %}
-
-  {% block cdn_scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="{% static "oscar/js/jquery/jquery.min.js" %}"><\/script>')</script>
-  {% endblock %}
-
-  {% block scripts %}
-  <script src="{% static 'oscar/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'oscar/js/oscar/ui.js' %}"></script>
-  {% endblock %}
-
-  {% block extrascripts %}{% endblock %}
-
-  <script>
-    $(function () {
-      {% block onbodyload %}oscar.init();{% endblock %}
-    });
-  </script>
-</body>
-
-</html>
+{% endblock %}

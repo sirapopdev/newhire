@@ -74,5 +74,3 @@ class TagPostListView(PostListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'

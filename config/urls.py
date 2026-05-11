@@ -18,6 +18,10 @@ urlpatterns = [
         include("newhire.blog.urls", namespace="blogs"),
     ),
     path(
+        "dashboard/",
+        include("newhire.dashboard.urls", namespace="dashboards"),
+    ),
+    path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
         name="about",

@@ -24,7 +24,7 @@ class Command(BaseCommand):
         Tag.objects.all().delete()
         Category.objects.all().delete()
         deleted_users_count, _ = User.objects.filter(
-            is_staff=False,
+            is_staff=True,
             is_superuser=False,
         ).delete()
 
@@ -70,7 +70,7 @@ class Command(BaseCommand):
         all_tags = list(Tag.objects.all())
         author, _ = User.objects.get_or_create(
             email=fake.email(),
-            defaults={"name": fake.name(), "password": "password123"},
+            defaults={"name": fake.name(), "password": "password123", "is_staff": True},
         )
 
         for _ in range(n):

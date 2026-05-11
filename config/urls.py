@@ -14,6 +14,10 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
+        "blogs/",
+        include("newhire.blog.urls", namespace="blogs"),
+    ),
+    path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
         name="about",

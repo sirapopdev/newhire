@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<div style="width: 100%; display: flex; justify-content: end;">
+    <form class="form-inline my-2 my-lg-0" method="get" action="{{ request.path }}">
+        {% include "oscar/partials/form_field.html" with field=form.q nolabel=True %}
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">{% trans "Search" %}</button>
+    </form>
+</div>

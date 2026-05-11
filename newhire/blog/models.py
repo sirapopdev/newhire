@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+from django.templatetags.static import static
 from oscar.models.fields import AutoSlugField
 
 # Create your models here.
@@ -35,7 +37,19 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('blogs:post-detail', args=[str(self.slug)])
     
+    class Meta:
+        ordering = ['-updated_at']
+
+    @property
+    def featured_image_url(self):
+        if self.featured_image:
+            return self.featured_image.url
+
+        return static('images/no-image.png')
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

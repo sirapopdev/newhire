@@ -1,0 +1,142 @@
+.post-detail {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 0 44px;
+}
+
+.post-detail__back {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: #0f766e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.post-detail__back:hover,
+.post-detail__back:focus {
+    color: #115e59;
+    text-decoration: underline;
+}
+
+.post-detail__header {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.post-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-bottom: 12px;
+    color: #6b7280;
+    font-size: 0.92rem;
+}
+
+.post-detail__category {
+    color: #0f766e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.post-detail__category:hover,
+.post-detail__category:focus {
+    color: #115e59;
+    text-decoration: underline;
+}
+
+.post-detail h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.post-detail__image {
+    width: 100%;
+    max-height: 460px;
+    margin-bottom: 28px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eef2f7;
+}
+
+.post-detail__body {
+    color: #374151;
+    font-size: 1.06rem;
+    line-height: 1.85;
+    white-space: pre-line;
+}
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.post-tag {
+    padding: 5px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    color: #374151;
+    font-size: 0.82rem;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.post-tag:hover,
+.post-tag:focus {
+    border-color: #0f766e;
+    color: #0f766e;
+    text-decoration: none;
+}
+
+.post-comments {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.post-comments h2 {
+    margin: 0 0 18px;
+    color: #111827;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.post-comment {
+    padding: 18px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.post-comment__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-bottom: 8px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.post-comment__meta span {
+    color: #111827;
+    font-weight: 700;
+}
+
+.post-comment__body {
+    color: #374151;
+    line-height: 1.7;
+}
+
+.post-comment__body p:last-child {
+    margin-bottom: 0;
+}
+
+.post-comments__empty {
+    margin: 0;
+    color: #64748b;
+}

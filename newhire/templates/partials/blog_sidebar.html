@@ -1,0 +1,38 @@
+{% load i18n %}
+
+{% if blog_categories or recent_posts %}
+<aside class="blog-sidebar" aria-label="{% trans 'Blog sidebar' %}">
+  {% if blog_categories %}
+  <section class="blog-sidebar__section">
+    <h2>{% trans "Categories" %}</h2>
+    <ul class="blog-sidebar__list">
+      {% for category in blog_categories %}
+      <li class="{% if category.slug == selected_category_slug %}blog-sidebar__item--selected{% endif %}">
+        {% if category.slug == selected_category_slug %}
+        <span class="blog-sidebar__selected-label">{{ category.name }}</span>
+        <a class="blog-sidebar__clear" href="{% url 'blogs:post-list' %}" aria-label="{% trans 'Clear category' %}">
+          ×
+        </a>
+        {% else %}
+        <a href="{% url 'blogs:post-category' category.slug %}">{{ category.name }}</a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if recent_posts %}
+  <section class="blog-sidebar__section">
+    <h2>{% trans "Recent posts" %}</h2>
+    <ul class="blog-sidebar__list">
+      {% for post in recent_posts %}
+      <li>
+        <a href="{% url 'blogs:post-detail' post.slug %}">{{ post.title }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</aside>
+{% endif %}

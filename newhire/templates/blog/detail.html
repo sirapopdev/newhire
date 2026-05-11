@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% load image_tags %}
+{% load static %}
+
+{% block title %}
+{{ object.title }}
+{% endblock %}
+
+{% block extrastyles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/blog/nav.css' %}">
+<link rel="stylesheet" href="{% static 'css/blog/detail.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<a class="post-detail__back" href="{% url 'blogs:post-list' %}">{% trans "Back to Blog" %}</a>
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+{% block content_layout_class %}blog-layout blog-layout--single{% endblock %}
+
+{% block content %}
+<article class="post-detail">
+    <header class="post-detail__header">
+        <div class="post-detail__meta">
+            {% if object.category %}
+            <a class="post-detail__category" href="{% url 'blogs:post-category' object.category.slug %}">{{ object.category.name }}</a>
+            {% endif %}
+            <span>{{ object.created_at|date:"M d, Y" }}</span>
+            {% if object.author and object.author.name %}
+            <span>By {{ object.author.name }}</span>
+            {% endif %}
+        </div>
+        <h1>{{ object.title }}</h1>
+    </header>
+
+    <img class="post-detail__image" src="{{ object.featured_image_url }}" alt="{{ object.title }}">
+
+    <div class="post-detail__body">
+        {{ object.body|linebreaks }}
+    </div>
+
+    {% if object.tags.all %}
+    <div class="post-tags" aria-label="Post tags">
+        {% for tag in object.tags.all %}
+        <a class="post-tag" href="{% url 'blogs:post-tag' tag.slug %}">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section class="post-comments" aria-labelledby="comments-title">
+        <h2 id="comments-title">{% trans "Comments" %}</h2>
+
+        {% for comment in object.comments.all %}
+        <article class="post-comment">
+            <div class="post-comment__meta">
+                {% if comment.author and comment.author.name %}
+                <span>{{ comment.author.name }}</span>
+                {% endif %}
+                <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
+            </div>
+            <div class="post-comment__body">
+                {{ comment.body|linebreaks }}
+            </div>
+        </article>
+        {% empty %}
+        <p class="post-comments__empty">{% trans "No comments yet." %}</p>
+        {% endfor %}
+    </section>
+</article>
+{% endblock %}

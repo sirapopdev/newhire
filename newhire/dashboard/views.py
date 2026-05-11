@@ -20,3 +20,7 @@ class DashboardLoginView(LoginView):
 
 class DashboardLogoutView(LogoutView):
     next_page = "/blogs/"
+
+
+class DashboardIndexView(LoginView):
+    template_name = 'dashboard/index.html'

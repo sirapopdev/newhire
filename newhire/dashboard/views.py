@@ -1,5 +1,16 @@
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import TemplateView
+from django_tables2 import SingleTableView
+
+from newhire.blog.models import Post
+
+from .forms import PostSearchForm
+from .tables import PostTable
 
 
 class DashboardLoginView(LoginView):
@@ -22,5 +33,56 @@ class DashboardLogoutView(LogoutView):
     next_page = "/blogs/"
 
 
-class DashboardIndexView(LoginView):
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = "dashboards:login"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class DashboardIndexView(StaffRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
+
+
+class DashboardPostListView(
+    StaffRequiredMixin, SingleTableView
+):
+    template_name = 'dashboard/post/list.html'
+    model = Post
+    table_class = PostTable
+    context_table_name = "posts"
+    form_class = PostSearchForm
+
+    def get_queryset(self):
+        self.form = self.form_class(self.request.GET)
+        posts = Post.objects.select_related("category", "author").prefetch_related("tags")
+
+        if self.form.is_valid():
+            query = self.form.cleaned_data.get("q")
+            if query:
+                posts = posts.filter(
+                    Q(title__icontains=query)
+                    | Q(body__icontains=query)
+                    | Q(author__name__icontains=query)
+                )
+
+        return posts
+
+    def get_table_pagination(self, table):
+        return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
+
+    def get_table(self, **kwargs):
+        table = super().get_table(**kwargs)
+        table.caption = self.get_description()
+        return table
+
+    def get_description(self):
+        if self.form.is_valid() and any(self.form.cleaned_data.values()):
+            return _("Post search results")
+        return _("Posts")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form
+        context["has_posts"] = self.object_list.exists()
+        return context

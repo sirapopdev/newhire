@@ -68,10 +68,16 @@ class Command(BaseCommand):
     def _generate_posts(self, n=10):
         all_categories = Category.objects.all()
         all_tags = list(Tag.objects.all())
-        author, _ = User.objects.get_or_create(
+        author, created = User.objects.get_or_create(
             email=fake.email(),
-            defaults={"name": fake.name(), "password": "password123", "is_staff": True},
+            defaults={
+                "name": fake.name(),
+                "is_staff": True,
+            },
         )
+        if created:
+            author.set_password("password123")
+            author.save(update_fields=["password"])
 
         for _ in range(n):
             title = fake.sentence(nb_words=6)

@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView
 from django_tables2 import SingleTableView
 
 from newhire.blog.models import Post
@@ -116,3 +116,18 @@ class DashboardPostEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     def form_valid(self, form):
         messages.success(self.request, _("Post updated successfully."))
         return super().form_valid(form)
+
+
+class DashboardPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = "dashboard/post/confirm_delete.html"
+    login_url = "dashboards:login"
+    success_url = reverse_lazy("dashboards:post-list")
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user.is_staff or post.author == self.request.user
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, _("Post deleted successfully."))
+        return super().delete(request, *args, **kwargs)

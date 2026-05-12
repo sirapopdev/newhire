@@ -177,13 +177,10 @@ class DashboardCommentListView(LoginRequiredMixin, SingleTableView):
         context["has_comments"] = self.object_list.exists()
         return context
     
-class DashboardCommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DashboardCommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = "dashboard/comment/confirm_delete.html"
     login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:comment-list")
 
-    def test_func(self):
-        comment = self.get_object()
-        return comment.author == self.request.user or self.request.user.is_staff
 

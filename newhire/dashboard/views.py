@@ -1,15 +1,17 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import TemplateView
+from django.views.generic import CreateView, TemplateView
 from django_tables2 import SingleTableView
 
 from newhire.blog.models import Post
 
-from .forms import PostSearchForm
+from .forms import PostForm, PostSearchForm
 from .tables import PostTable
 
 
@@ -86,3 +88,16 @@ class DashboardPostListView(
         context["form"] = self.form
         context["has_posts"] = self.object_list.exists()
         return context
+
+
+class DashboardPostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = "dashboard/post/form.html"
+    login_url = "dashboards:login"
+    success_url = reverse_lazy("dashboards:post-list")
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, _("Post created successfully."))
+        return super().form_valid(form)

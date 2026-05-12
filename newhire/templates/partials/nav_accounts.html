@@ -12,14 +12,14 @@
                 {% block nav_account_navbar_authenticated %}
                 {% if user.is_staff or perms.partner.dashboard_access %}
                 <li class="nav-item mr-2">
-                    <a href="{% url 'dashboard:index' %}" class="nav-link">
+                    <a href="{% url 'dashboard_blogs:post-list' %}" class="nav-link">
                         <i class="fas fa-list-ul mr-2"></i>
                         {% trans "Dashboard" %}
                     </a>
                 </li>
                 {% endif %}
                 <li class="nav-item mr-2">
-                    <form method="post" action="{% url 'dashboards:logout' %}">
+                    <form method="post" action="{% url 'dashboard:logout' %}">
                         {% csrf_token %}
                         <button id="logout_link" type="submit" class="btn btn-link nav-link">
                             <i class="fas fa-sign-out-alt mr-2"></i>
@@ -30,7 +30,7 @@
                 {% endblock %}
                 {% else %}
                 <li class="nav-item mr-2">
-                    <a id="login_link" href="{% url 'dashboards:login' %}" class="nav-link">
+                    <a id="login_link" href="{% url 'account_login' %}" class="nav-link">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         {% trans "Login or register" %}
                     </a>

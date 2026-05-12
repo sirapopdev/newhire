@@ -81,7 +81,7 @@ class PostDetailView(DetailView):
     
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('dashboards:login')
+            return redirect('account_login')
 
         self.object = self.get_object()
         form = CommentForm(request.POST)

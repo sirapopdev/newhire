@@ -12,8 +12,8 @@ Delete Category | {{ block.super }}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'dashboards:category-list' %}">{% trans "Categories" %}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'dashboards:category-edit' pk=category.pk %}">{{ category.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard_blogs:category-list' %}">{% trans "Categories" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard_blogs:category-edit' pk=category.pk %}">{{ category.name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{% trans "Delete Category" %}</li>
     </ol>
 </nav>
@@ -39,7 +39,7 @@ Delete Category | {{ block.super }}
             {% trans "Delete" %}
         </button>
         {% trans "or" %}
-        <a href="{% url 'dashboards:category-list' %}">{% trans "cancel" %}</a>
+        <a href="{% url 'dashboard_blogs:category-list' %}">{% trans "cancel" %}</a>
     </div>
 </form>
 {% endblock %}

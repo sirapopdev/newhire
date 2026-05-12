@@ -15,10 +15,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboards:index' %}">{% trans "Dashboard" %}</a>
+                <a href="{% url 'dashboard_blogs:index' %}">{% trans "Dashboard" %}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'dashboards:post-list' %}">{% trans "Posts" %}</a>
+                <a href="{% url 'dashboard_blogs:post-list' %}">{% trans "Posts" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
                 {% if object %}
@@ -55,7 +55,7 @@
             <button class="btn btn-primary" type="submit" data-loading-text="{% trans 'Saving...' %}">
                 <i class="fas fa-save"></i> {% trans "Save post" %}
             </button>
-            <a class="btn btn-secondary" href="{% url 'dashboards:post-list' %}">
+            <a class="btn btn-secondary" href="{% url 'dashboard_blogs:post-list' %}">
                 {% trans "Cancel" %}
             </a>
         </div>

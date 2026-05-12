@@ -1,4 +1,5 @@
 from django import forms
+from .models import Comment
 
 
 class PostFilterForm(forms.Form):
@@ -11,3 +12,15 @@ class PostFilterForm(forms.Form):
             'placeholder': 'Search...'
         })
     )
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['body']
+        widgets = {
+            'body': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Write your comment here...'
+            }),
+        }

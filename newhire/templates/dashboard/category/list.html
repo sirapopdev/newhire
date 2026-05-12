@@ -1,0 +1,91 @@
+{% extends 'dashboard/layout.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block body_class %}{{ block.super }} catalogue{% endblock %}
+
+{% block title %}
+    {% trans "Categories" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboards:index' %}">{% trans "Dashboard" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% trans "Categories" %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>{% trans "Categories" %}</h1>
+    </div>
+{% endblock header %}
+
+{% block dashboard_content %}
+    {% block create_category %}
+        <div class="table-header">
+            <h3><i class="fas fa-newspaper"></i> {% trans "Create new category" %}</h3>
+        </div>
+        <div class="card card-body">
+            <a href="{% url 'dashboards:category-create' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> {% trans "New Category" %}
+            </a>
+        </div>
+    {% endblock %}
+
+    {% block search_categories %}
+        <div class="table-header">
+            <h3><i class="fas fa-search"></i> {% trans "Search Categories" %}</h3>
+        </div>
+        <div class="card card-body mb-0">
+            <form id="search_category_form" method="get" class="form-inline">
+                {% comment %}
+                    Add the current query string to the search form so that the
+                    sort order is not reset when searching.
+                {% endcomment %}
+                {% for name, value in request.GET.items %}
+                    {% if name not in form.fields %}
+                        <input type="hidden" name="{{ name }}" value="{{ value }}"/>
+                    {% endif %}
+                {% endfor %}
+
+                {% include "dashboard/partials/form_fields_inline.html" with form=form %}
+                <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Searching...' %}"><i class="fas fa-search"></i> {% trans "Search" %}</button>
+            </form>
+        </div>
+    {% endblock %}
+
+    {% if has_categories %}
+        {% block category_list %}
+            <form method="post">
+                {% csrf_token %}
+                {% block bulk_action %}
+                    {% trans "Categories" as module_label %}
+                    {% include "dashboard/partials/bulk_actions.html" with page_objects_count=categories.page.object_list|length num_pages=categories.paginator.num_pages total_count=categories.paginator.count module=module_label %}
+                {% endblock bulk_action %}
+                {% block category_table %}
+                    {% render_table categories %}
+                {% endblock category_table %}
+            </form>
+        {% endblock category_list %}
+    {% else %}
+        <p>{% trans "No categories found." %}</p>
+    {% endif %}
+
+{% endblock dashboard_content %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    if (oscar.dashboard.category_lists) {
+        oscar.dashboard.category_lists.init();
+    }
+    if (oscar.dashboard.bulk_actions) {
+        oscar.dashboard.bulk_actions.init();
+    }
+{% endblock onbodyload %}

@@ -5,7 +5,7 @@ from django_tables2 import A, Column, TemplateColumn
 
 from oscar.core.loading import get_class
 
-from newhire.blog.models import Post
+from newhire.blog.models import Post, Category
 
 DashboardTable = get_class("dashboard.tables", "DashboardTable")
 
@@ -80,3 +80,38 @@ class PostTable(DashboardTable):
 
     def render_author(self, record):
         return record.author.name or record.author.email
+
+class CategoryTable(DashboardTable):
+    checkbox = TemplateColumn(
+        verbose_name="",
+        template_code=(
+            '<input type="checkbox" name="selected_category" '
+            'class="selected_category" value="{{ record.id }}"/>'
+        ),
+        orderable=False,
+    )
+    name = Column(
+        verbose_name=_("Name"),
+        accessor=A("name"),
+        order_by="name",
+    )
+    actions = TemplateColumn(
+        template_name="dashboard/category/row_actions.html",
+        verbose_name=_("Actions"),
+        orderable=False,
+    )
+
+    icon = "fas fa-folder"
+    caption = ngettext_lazy("%s Category", "%s Categories")
+
+    class Meta(DashboardTable.Meta):
+        model = Category
+        fields = ()
+        sequence = (
+            "checkbox",
+            "name",
+            "actions",
+        )
+        order_by = "name"
+        per_page = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
+    

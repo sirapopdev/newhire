@@ -1,0 +1,63 @@
+{% extends 'dashboard/layout.html' %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} catalogue{% endblock %}
+
+{% block title %}
+    {% if object %}
+        {% trans "Edit category" %} | {{ block.super }}
+    {% else %}
+        {% trans "Create category" %} | {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboards:index' %}">{% trans "Dashboard" %}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboards:category-list' %}">{% trans "Categories" %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {% if object %}
+                    {% trans "Edit category" %}
+                {% else %}
+                    {% trans "Create category" %}
+                {% endif %}
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header">
+        <h1>
+            {% if object %}
+                {% trans "Edit category" %}
+            {% else %}
+                {% trans "Create category" %}
+            {% endif %}
+        </h1>
+    </div>
+{% endblock header %}
+
+{% block dashboard_content %}
+    <form method="post" enctype="multipart/form-data" class="wysiwyg" novalidate>
+        {% csrf_token %}
+
+        <div class="card card-body">
+            {% include "dashboard/partials/form_fields.html" with form=form %}
+        </div>
+
+        <div class="form-actions mt-3">
+            <button class="btn btn-primary" type="submit" data-loading-text="{% trans 'Saving...' %}">
+                <i class="fas fa-save"></i> {% trans "Save category" %}
+            </button>
+            <a class="btn btn-secondary" href="{% url 'dashboards:category-list' %}">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+{% endblock dashboard_content %}

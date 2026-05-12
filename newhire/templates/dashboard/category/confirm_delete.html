@@ -1,0 +1,45 @@
+{% extends 'oscar/dashboard/layout.html' %}
+
+{% load i18n %}
+
+{% block title %}
+Delete Category | {{ block.super }}
+{% endblock %}
+
+{% block body_class %}{{ block.super }} create-page{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboards:category-list' %}">{% trans "Categories" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboards:category-edit' pk=category.pk %}">{{ category.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Delete Category" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block headertext %}{% trans "Delete Category" %}{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-header">
+    <h2>{% trans "Delete Category" %}</h2>
+</div>
+<form id="delete_product_form" method="post" class="card card-body bg-light">
+    {% csrf_token %}
+
+    <p>
+        {% blocktrans with title=category.name %}
+        Delete category <strong>{{ title }}</strong> - are you sure?
+        {% endblocktrans %}
+    </p>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger" data-loading-text="{% trans 'Deleting...' %}">
+            {% trans "Delete" %}
+        </button>
+        {% trans "or" %}
+        <a href="{% url 'dashboards:category-list' %}">{% trans "cancel" %}</a>
+    </div>
+</form>
+{% endblock %}

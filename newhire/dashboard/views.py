@@ -64,16 +64,6 @@ class DashboardPostListView(
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
-    def get_table(self, **kwargs):
-        table = super().get_table(**kwargs)
-        table.caption = self.get_description()
-        return table
-
-    def get_description(self):
-        if self.form.is_valid() and any(self.form.cleaned_data.values()):
-            return _("Post search results")
-        return _("Posts")
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form

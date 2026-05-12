@@ -64,15 +64,9 @@
                 {% endif %}
                 <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
             </div>
-            <div class="post-comment__body">
-                {{ comment.body|linebreaks }}
+            <div class="post-comment__body comment-body">
+                {{ comment.body|safe }}
             </div>
-            {% if user.is_staff or comment.author == user %}
-            <form method="post" action="{% url 'blogs:comment-delete' comment.pk %}">
-                {% csrf_token %}
-                <button type="submit">{% trans "Delete" %}</button>
-            </form>
-            {% endif %}
         </article>
         {% empty %}
         <p class="post-comments__empty">{% trans "No comments yet." %}</p>
@@ -80,10 +74,9 @@
     </section>
 
     {% if user.is_authenticated %}
-    <form method="post" class="comment-form">
+    <form method="post"  enctype="multipart/form-data" class="wysiwyg" novalidate>
         {% csrf_token %}
-        {{ comment_form.body }}
-        {{ comment_form.body.errors }}
+        {% include "dashboard/partials/form_fields.html" with form=form %}
         <button type="submit">{% trans "Add comment" %}</button>
     </form>
     {% else %}

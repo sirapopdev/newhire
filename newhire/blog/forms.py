@@ -14,13 +14,15 @@ class PostFilterForm(forms.Form):
     )
 
 class CommentForm(forms.ModelForm):
+    body = forms.CharField(
+        label='Comment',
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'wysiwyg',
+            'rows': 4,
+            'placeholder': 'Write your comment here...'
+        })
+    )
     class Meta:
         model = Comment
         fields = ['body']
-        widgets = {
-            'body': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Write your comment here...'
-            }),
-        }

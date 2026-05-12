@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block layout %}
 {% include "partials/nav_accounts.html" %}
+
 
 <header class="header container">
     <br>
@@ -39,3 +41,35 @@
 </div>
 {% endblock %}
 {% endblock %}
+
+
+{% block extrascripts %}
+    {{ block.super }}
+
+    {# jQuery plugins #}
+    <script src="{% static 'oscar/js/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'oscar/js/tinymce/jquery.tinymce.min.js' %}"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+
+    var options = {
+        entity_encoding: 'raw',
+        statusbar: false,
+        menubar: false,
+        convert_urls: false,
+        plugins: "link lists",
+        style_formats: [
+            {title: 'Text', block: 'p'},
+            {title: 'Heading', block: 'h2'},
+            {title: 'Subheading', block: 'h3'}
+        ],
+        toolbar: "styles | bold italic blockquote | bullist numlist | link"
+    }
+    var $textareas = $(window.document).find('textarea').not('.no-widget-init textarea').not('.no-widget-init');
+    $textareas.filter('form.wysiwyg textarea').tinymce(options);
+    $textareas.filter('.wysiwyg').tinymce(options);
+{% endblock %}
+
+            

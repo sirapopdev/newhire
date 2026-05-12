@@ -140,3 +140,10 @@
     margin: 0;
     color: #64748b;
 }
+
+.comment-body blockquote {
+    border-left: 4px solid #ccc;
+    margin: 1rem 0;
+    padding-left: 1rem;
+    color: #555;
+}

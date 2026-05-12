@@ -76,7 +76,7 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comment_form'] = CommentForm()
+        context['form'] = CommentForm()
         return context
     
     def post(self, request, *args, **kwargs):
@@ -95,12 +95,8 @@ class PostDetailView(DetailView):
         return redirect('blogs:post-detail', slug=self.object.slug)
     
 
-class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
-
-    def test_func(self):
-        comment = self.get_object()
-        return self.request.user.is_staff or comment.author == self.request.user
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()

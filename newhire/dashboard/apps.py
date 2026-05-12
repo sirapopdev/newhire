@@ -1,6 +1,5 @@
-from django.apps import AppConfig
+from oscar.apps.dashboard.apps import DashboardConfig as OscarDashboardConfig
 
 
-class DashboardConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'dashboard'
+class DashboardConfig(OscarDashboardConfig):
+    name = "newhire.dashboard"

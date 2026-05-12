@@ -6,11 +6,22 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django_tables2 import SingleTableView
+from oscar.apps.dashboard.views import IndexView as OscarIndexView
 
 from newhire.blog.models import Category, Post, Comment
 
 from .forms import CategoryForm, CategorySearchForm, PostForm, PostSearchForm
 from .tables import CategoryTable, CommentTable, PostTable
+
+
+class IndexView(OscarIndexView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["total_posts"] = Post.objects.count()
+        context["total_categories"] = Category.objects.count()
+        context["total_comments"] = Comment.objects.count()
+        return context
+
 
 class DashboardPostListView(
     LoginRequiredMixin, SingleTableView
@@ -174,5 +185,4 @@ class DashboardCommentDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "dashboard/comment/confirm_delete.html"
     login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:comment-list")
-
 

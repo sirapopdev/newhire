@@ -5,8 +5,8 @@
 {% block body_class %}{{ block.super }} orders home{% endblock %}
 
 {% block extrahead %}
-    {{ block.super }}
-    <meta http-equiv="refresh" content="300">
+{{ block.super }}
+<meta http-equiv="refresh" content="300">
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -19,11 +19,29 @@
 {% block dashboard_content %}
 
 <div class="table-header">
-    <i class="fas fa-signal"></i> {% trans "Your Store Statistics" %}
+    <i class="fas fa-signal"></i> {% trans "Overview" %}
 </div>
 
 <div class="content-block">
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <th class="col-md-10">{% trans "Posts" %}</th>
+                    <td class="col-md-2">{{ total_posts }}</td>
+                </tr>
+                <tr>
+                    <th class="col-md-10">{% trans "Category" %}</th>
+                    <td class="col-md-2">{{ total_categories }}</td>
+                </tr>
+                <tr>
+                    <th class="col-md-10">{% trans "Comments" %}</th>
+                    <td class="col-md-2">{{ total_comments }}</td>
+                </tr>
+            </table>
+        </div>
 
+    </div>
 </div>
 
 

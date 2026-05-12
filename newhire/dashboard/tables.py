@@ -48,12 +48,7 @@ class PostTable(DashboardTable):
         orderable=False,
     )
     actions = TemplateColumn(
-        template_code=(
-            "{% load i18n %}"
-            '<a class="btn btn-secondary btn-sm" href="{{ record.get_absolute_url }}">'
-            '{% trans "View" %}'
-            "</a>"
-        ),
+        template_name="dashboard/post/row_actions.html",
         verbose_name=_("Actions"),
         orderable=False,
     )

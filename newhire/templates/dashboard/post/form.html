@@ -4,7 +4,11 @@
 {% block body_class %}{{ block.super }} catalogue{% endblock %}
 
 {% block title %}
-    {% trans "Create post" %} | {{ block.super }}
+    {% if object %}
+        {% trans "Edit post" %} | {{ block.super }}
+    {% else %}
+        {% trans "Create post" %} | {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -17,7 +21,11 @@
                 <a href="{% url 'dashboards:post-list' %}">{% trans "Posts" %}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                {% trans "Create post" %}
+                {% if object %}
+                    {% trans "Edit post" %}
+                {% else %}
+                    {% trans "Create post" %}
+                {% endif %}
             </li>
         </ol>
     </nav>
@@ -25,7 +33,13 @@
 
 {% block header %}
     <div class="page-header">
-        <h1>{% trans "Create post" %}</h1>
+        <h1>
+            {% if object %}
+                {% trans "Edit post" %}
+            {% else %}
+                {% trans "Create post" %}
+            {% endif %}
+        </h1>
     </div>
 {% endblock header %}
 

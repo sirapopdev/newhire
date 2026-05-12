@@ -11,14 +11,6 @@ DashboardTable = get_class("dashboard.tables", "DashboardTable")
 
 
 class PostTable(DashboardTable):
-    checkbox = TemplateColumn(
-        verbose_name="",
-        template_code=(
-            '<input type="checkbox" name="selected_post" '
-            'class="selected_post" value="{{ record.id }}"/>'
-        ),
-        orderable=False,
-    )
     title = TemplateColumn(
         template_code=(
             "<strong>{{ record.title }}</strong><br>"
@@ -60,7 +52,6 @@ class PostTable(DashboardTable):
         model = Post
         fields = ("status", "updated_at")
         sequence = (
-            "checkbox",
             "title",
             "image",
             "category",
@@ -82,14 +73,6 @@ class PostTable(DashboardTable):
         return record.author.name or record.author.email
 
 class CategoryTable(DashboardTable):
-    checkbox = TemplateColumn(
-        verbose_name="",
-        template_code=(
-            '<input type="checkbox" name="selected_category" '
-            'class="selected_category" value="{{ record.id }}"/>'
-        ),
-        orderable=False,
-    )
     name = Column(
         verbose_name=_("Name"),
         accessor=A("name"),
@@ -108,7 +91,6 @@ class CategoryTable(DashboardTable):
         model = Category
         fields = ()
         sequence = (
-            "checkbox",
             "name",
             "actions",
         )

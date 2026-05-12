@@ -5,7 +5,7 @@ from django_tables2 import A, Column, TemplateColumn
 
 from oscar.core.loading import get_class
 
-from newhire.blog.models import Post, Category
+from newhire.blog.models import Post, Category, Comment
 
 DashboardTable = get_class("dashboard.tables", "DashboardTable")
 
@@ -115,3 +115,47 @@ class CategoryTable(DashboardTable):
         order_by = "name"
         per_page = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
     
+
+class CommentTable(DashboardTable):
+    body = Column(
+        verbose_name=_("Comment"),
+        accessor=A("body"),
+        orderable=False,        
+    )
+    author = Column(
+        verbose_name=_("Commenter"),
+        accessor=A("author"),
+        orderable=False,
+    )
+    post = Column(
+        verbose_name=_("Post"),
+        accessor=A("post"),
+        orderable=False,
+    )
+  
+    created_at = Column(
+        verbose_name=_("Created At"),
+        accessor=A("created_at"),
+        order_by="created_at",
+    )
+    actions = TemplateColumn(
+        template_name="dashboard/comment/row_actions.html",
+        verbose_name=_("Actions"),
+        orderable=False,
+    )       
+
+    icon = "fas fa-comments"
+    caption = ngettext_lazy("%s Comment", "%s Comments")
+
+    class Meta(DashboardTable.Meta):
+        model = Comment
+        fields = ()
+        sequence = (
+            "body",
+            "author",
+            "post",
+            "created_at",
+            "actions",
+        )
+        order_by = "-created_at"
+        per_page = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE

@@ -1,17 +1,16 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django_tables2 import SingleTableView
 
-from newhire.blog.models import Category, Post
+from newhire.blog.models import Category, Post, Comment
 
 from .forms import CategoryForm, CategorySearchForm, PostForm, PostSearchForm
-from .tables import CategoryTable, PostTable
+from .tables import CategoryTable, CommentTable, PostTable
 
 class DashboardPostListView(
     LoginRequiredMixin, SingleTableView
@@ -160,3 +159,31 @@ class DashboardCategoryDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _("Category deleted successfully."))
         return super().delete(request, *args, **kwargs)
+    
+class DashboardCommentListView(LoginRequiredMixin, SingleTableView):
+    template_name = 'dashboard/comment/list.html'
+    model = Comment
+    table_class = CommentTable
+    context_table_name = "comments"
+
+    def get_queryset(self):
+        return Comment.objects.select_related("post", "author").filter(post__author=self.request.user)
+
+    def get_table_pagination(self, table):
+        return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["has_comments"] = self.object_list.exists()
+        return context
+    
+class DashboardCommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = "dashboard/comment/confirm_delete.html"
+    login_url = "account_login"
+    success_url = reverse_lazy("dashboard_blogs:comment-list")
+
+    def test_func(self):
+        comment = self.get_object()
+        return comment.author == self.request.user or self.request.user.is_staff
+

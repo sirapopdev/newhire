@@ -399,4 +399,10 @@ OSCAR_DASHBOARD_NAVIGATION += [
         "url_name": "dashboard_blogs:category-list",
         "access_fn": lambda user, url_name, url_args=None, url_kwargs=None: user.is_staff,
     },
+    {
+        "label": "Comments",
+        "icon": "fas fa-comments",
+        "url_name": "dashboard_blogs:comment-list",
+        "access_fn": lambda user, url_name, url_args=None, url_kwargs=None: user.is_staff,
+    }
 ]

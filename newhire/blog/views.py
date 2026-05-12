@@ -1,9 +1,8 @@
-from xml.dom.minidom import Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views.generic import DeleteView, DetailView, ListView
 from django.db.models import Q
-from .models import Category, Post
+from .models import Category, Post, Comment
 from .forms import CommentForm, PostFilterForm
 
 class PostListView(ListView):

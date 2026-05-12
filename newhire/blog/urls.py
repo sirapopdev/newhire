@@ -19,6 +19,6 @@ urlpatterns = [
     path('', post_list_view, name='post-list'),
     path('category/<slug:slug>/', category_post_list_view, name='post-category'),
     path('tag/<slug:slug>/', tag_post_list_view, name='post-tag'),
-    path('<slug:slug>/', post_detail_view, name='post-detail'),
     path('comment/<int:pk>/delete/', comment_delete_view, name='comment-delete'),
+    path('<slug:slug>/', post_detail_view, name='post-detail'),
 ]

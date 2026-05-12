@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -20,11 +19,6 @@ class DashboardLoginView(LoginView):
     redirect_authenticated_user = True
 
     def form_valid(self, form):
-        user = form.get_user()
-
-        if not user.is_staff:
-            raise PermissionDenied
-
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -35,19 +29,13 @@ class DashboardLogoutView(LogoutView):
     next_page = "/blogs/"
 
 
-class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
-    login_url = "dashboards:login"
-
-    def test_func(self):
-        return self.request.user.is_staff
-
-
-class DashboardIndexView(StaffRequiredMixin, TemplateView):
+class DashboardIndexView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
+    login_url = "dashboards:login"
 
 
 class DashboardPostListView(
-    StaffRequiredMixin, SingleTableView
+    LoginRequiredMixin, SingleTableView
 ):
     template_name = 'dashboard/post/list.html'
     model = Post
@@ -58,6 +46,9 @@ class DashboardPostListView(
     def get_queryset(self):
         self.form = self.form_class(self.request.GET)
         posts = Post.objects.select_related("category", "author").prefetch_related("tags")
+
+        if not self.request.user.is_staff:
+            posts = posts.filter(author=self.request.user)
 
         if self.form.is_valid():
             query = self.form.cleaned_data.get("q")

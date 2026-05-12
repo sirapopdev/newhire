@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -61,31 +61,23 @@ class DashboardPostCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, _("Post created successfully."))
         return super().form_valid(form)
     
-class DashboardPostEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class DashboardPostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post/form.html"
     login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:post-list")
 
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user.is_staff or post.author == self.request.user
-
     def form_valid(self, form):
         messages.success(self.request, _("Post updated successfully."))
         return super().form_valid(form)
 
 
-class DashboardPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DashboardPostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = "dashboard/post/confirm_delete.html"
     login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:post-list")
-
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user.is_staff or post.author == self.request.user
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _("Post deleted successfully."))

@@ -59,6 +59,8 @@
             <div class="post-comment__meta">
                 {% if comment.author and comment.author.name %}
                 <span>{{ comment.author.name }}</span>
+                {% else %}
+                <span>{{ comment.author.email }}</span>
                 {% endif %}
                 <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
             </div>

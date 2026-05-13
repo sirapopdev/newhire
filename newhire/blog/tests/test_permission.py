@@ -104,18 +104,17 @@ def test_anonymous_user_cannot_delete_post(client, user):
     assert Post.objects.filter(pk=post.pk).exists()
 
 
-def test_author_can_edit_own_post(client, user):
+def test_normal_user_cannot_access_post_edit(client, user):
     post = create_post(user)
     url = reverse("dashboard_blogs:post-edit", kwargs={"pk": post.pk})
 
     client.force_login(user)
     response = client.get(url)
 
-    assert response.status_code == 200
-    assert "Test Post" in response.content.decode()
+    assert response.status_code == 403
 
 
-def test_author_can_update_own_post(client, user):
+def test_normal_user_cannot_update_post(client, user):
     post = create_post(user)
     url = reverse("dashboard_blogs:post-edit", kwargs={"pk": post.pk})
 
@@ -124,11 +123,11 @@ def test_author_can_update_own_post(client, user):
 
     post.refresh_from_db()
 
-    assert response.status_code == 302
-    assert post.title == "Author Updated Post"
+    assert response.status_code == 403
+    assert post.title == "Test Post"
 
 
-def test_author_cannot_access_other_users_post_edit(client, user):
+def test_normal_user_cannot_access_other_users_post_edit(client, user):
     owner = UserFactory.create()
     post = create_post(owner)
     url = reverse("dashboard_blogs:post-edit", kwargs={"pk": post.pk})
@@ -136,10 +135,10 @@ def test_author_cannot_access_other_users_post_edit(client, user):
     client.force_login(user)
     response = client.get(url)
 
-    assert response.status_code in [403, 404]
+    assert response.status_code == 403
 
 
-def test_author_cannot_update_other_users_post(client, user):
+def test_normal_user_cannot_update_other_users_post(client, user):
     owner = UserFactory.create()
     post = create_post(owner)
     url = reverse("dashboard_blogs:post-edit", kwargs={"pk": post.pk})
@@ -149,22 +148,22 @@ def test_author_cannot_update_other_users_post(client, user):
 
     post.refresh_from_db()
 
-    assert response.status_code in [403, 404]
+    assert response.status_code == 403
     assert post.title == "Test Post"
 
 
-def test_author_can_delete_own_post(client, user):
+def test_normal_user_cannot_delete_post(client, user):
     post = create_post(user)
     url = reverse("dashboard_blogs:post-delete", kwargs={"pk": post.pk})
 
     client.force_login(user)
     response = client.post(url)
 
-    assert response.status_code == 302
-    assert not Post.objects.filter(pk=post.pk).exists()
+    assert response.status_code == 403
+    assert Post.objects.filter(pk=post.pk).exists()
 
 
-def test_author_cannot_delete_other_users_post(client, user):
+def test_normal_user_cannot_delete_other_users_post(client, user):
     owner = UserFactory.create()
     post = create_post(owner)
     url = reverse("dashboard_blogs:post-delete", kwargs={"pk": post.pk})
@@ -172,7 +171,7 @@ def test_author_cannot_delete_other_users_post(client, user):
     client.force_login(user)
     response = client.post(url)
 
-    assert response.status_code in [403, 404]
+    assert response.status_code == 403
     assert Post.objects.filter(pk=post.pk).exists()
 
 

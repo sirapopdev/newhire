@@ -108,8 +108,3 @@ class Command(BaseCommand):
         self._generate_categories(n=5)
         self._generate_tags()
         self._generate_posts(n=options.get("n"))
-        # Category.objects.create(name="Django")
-
-        # self.stdout.write(
-        #     self.style.SUCCESS(f"N is {options.get('n')}")
-        # )

@@ -12,21 +12,14 @@ DashboardTable = get_class("dashboard.tables", "DashboardTable")
 
 class PostTable(DashboardTable):
     title = TemplateColumn(
-        template_code=(
-            "<strong>{{ record.title }}</strong><br>"
-            '<small class="text-muted">{{ record.slug }}</small>'
-        ),
+        template_name="dashboard/post/title_column.html",
         verbose_name=_("Title"),
         order_by="title",
         accessor=A("title"),
     )
     image = TemplateColumn(
         verbose_name=_("Image"),
-        template_code=(
-            '<img src="{{ record.featured_image_url }}" '
-            'alt="{{ record.title }}" '
-            'style="width: 60px; height: 60px; object-fit: cover;">'
-        ),
+        template_name="dashboard/post/image_column.html",
         orderable=False,
     )
     category = Column(

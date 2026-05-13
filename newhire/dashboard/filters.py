@@ -1,5 +1,6 @@
 import django_filters
-from django.db.models import Q
+from django.contrib.postgres.search import SearchQuery
+from django.contrib.postgres.search import SearchVector
 
 from newhire.blog.models import Category
 from newhire.blog.models import Post
@@ -13,11 +14,9 @@ class PostFilter(django_filters.FilterSet):
         fields = ()
 
     def filter_q(self, queryset, name, value):
-        return queryset.filter(
-            Q(title__icontains=value)
-            | Q(body__icontains=value)
-            | Q(author__name__icontains=value),
-        )
+        return queryset.annotate(
+            search=SearchVector("title", "body", "author__name"),
+        ).filter(search=SearchQuery(value))
 
 
 class CategoryFilter(django_filters.FilterSet):

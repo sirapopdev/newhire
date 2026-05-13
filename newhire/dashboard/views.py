@@ -1,16 +1,17 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, UpdateView, DeleteView
-from django_tables2 import SingleTableView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin, SingleTableView
 from oscar.apps.dashboard.views import IndexView as OscarIndexView
 
 from newhire.blog.models import Category, Post, Comment
 
-from .forms import CategoryForm, CategorySearchForm, PostForm, PostSearchForm
+from .filters import CategoryFilter, PostFilter
+from .forms import CategoryForm, PostForm
 from .tables import CategoryTable, CommentTable, PostTable
 
 
@@ -24,35 +25,23 @@ class IndexView(OscarIndexView):
 
 
 class DashboardPostListView(
-    LoginRequiredMixin, SingleTableView
+    LoginRequiredMixin, SingleTableMixin, FilterView
 ):
     template_name = 'dashboard/post/list.html'
     model = Post
     table_class = PostTable
     context_table_name = "posts"
-    form_class = PostSearchForm
+    filterset_class = PostFilter
 
     def get_queryset(self):
-        self.form = self.form_class(self.request.GET)
-        posts = Post.objects.select_related("category", "author").prefetch_related("tags")
-
-        if self.form.is_valid():
-            query = self.form.cleaned_data.get("q")
-            if query:
-                posts = posts.filter(
-                    Q(title__icontains=query)
-                    | Q(body__icontains=query)
-                    | Q(author__name__icontains=query)
-                )
-
-        return posts
+        return Post.objects.select_related("category", "author").prefetch_related("tags")
 
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form
+        context["form"] = self.filterset.form
         context["has_posts"] = self.object_list.exists()
         return context
 
@@ -89,30 +78,22 @@ class DashboardPostDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
     
 
-class DashboardCategoryListView(LoginRequiredMixin, SingleTableView):
+class DashboardCategoryListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     template_name = 'dashboard/category/list.html'
     model = Category
     table_class = CategoryTable
     context_table_name = "categories"
-    form_class = CategorySearchForm
+    filterset_class = CategoryFilter
 
     def get_queryset(self):
-        self.form = self.form_class(self.request.GET)
-        categories = Category.objects.all()
-
-        if self.form.is_valid():
-            query = self.form.cleaned_data.get("q")
-            if query:
-                categories = categories.filter(name__icontains=query)
-
-        return categories
+        return Category.objects.all()
 
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form
+        context["form"] = self.filterset.form
         context["has_categories"] = self.object_list.exists()
         return context
     

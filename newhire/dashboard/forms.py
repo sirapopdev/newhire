@@ -12,10 +12,6 @@ ALLOWED_FEATURED_IMAGE_TYPES = {
 }
 
 
-class PostSearchForm(forms.Form):
-    q = forms.CharField(label="Search", required=False)
-
-
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -53,9 +49,6 @@ class PostForm(forms.ModelForm):
 
         return image
     
-class CategorySearchForm(forms.Form):
-    q = forms.CharField(label="Search", required=False)
-
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category

@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 def create_post(user, title="Test Post", status="published", category=None):
     if category is None:
-        category = Category.objects.create(name="Test Category")
+        category = Category.objects.create(name=f"Test {title}")
     
     return Post.objects.create(
         title=title,

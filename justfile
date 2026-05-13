@@ -41,3 +41,7 @@ manage +args:
 restart:
     @echo "Restarting containers..."
     @docker compose restart
+
+# pytest: Run pytest.
+pytest *args:
+    @docker compose run --rm django pytest {{args}}

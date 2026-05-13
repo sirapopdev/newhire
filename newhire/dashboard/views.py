@@ -36,9 +36,6 @@ class DashboardPostListView(
         self.form = self.form_class(self.request.GET)
         posts = Post.objects.select_related("category", "author").prefetch_related("tags")
 
-        if not self.request.user.is_staff:
-            posts = posts.filter(author=self.request.user)
-
         if self.form.is_valid():
             query = self.form.cleaned_data.get("q")
             if query:
@@ -64,7 +61,6 @@ class DashboardPostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post/form.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:post-list")
 
     def form_valid(self, form):
@@ -76,7 +72,6 @@ class DashboardPostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post/form.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:post-list")
 
     def form_valid(self, form):
@@ -87,7 +82,6 @@ class DashboardPostEditView(LoginRequiredMixin, UpdateView):
 class DashboardPostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = "dashboard/post/confirm_delete.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:post-list")
 
     def delete(self, request, *args, **kwargs):
@@ -126,7 +120,6 @@ class DashboardCategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = "dashboard/category/form.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:category-list")
 
     def form_valid(self, form):
@@ -137,11 +130,7 @@ class DashboardCategoryEditView(LoginRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = "dashboard/category/form.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:category-list")
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def form_valid(self, form):
         messages.success(self.request, _("Category updated successfully."))
@@ -151,13 +140,7 @@ class DashboardCategoryEditView(LoginRequiredMixin, UpdateView):
 class DashboardCategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     template_name = "dashboard/category/confirm_delete.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:category-list")
-
-
-    def test_func(self):
-        category = self.get_object()
-        return self.request.user.is_staff or category.author == self.request.user
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _("Category deleted successfully."))
@@ -183,6 +166,4 @@ class DashboardCommentListView(LoginRequiredMixin, SingleTableView):
 class DashboardCommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = "dashboard/comment/confirm_delete.html"
-    login_url = "account_login"
     success_url = reverse_lazy("dashboard_blogs:comment-list")
-

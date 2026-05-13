@@ -50,12 +50,12 @@
                     sort order is not reset when searching.
                 {% endcomment %}
                 {% for name, value in request.GET.items %}
-                    {% if name not in form.fields %}
+                    {% if name not in filter.form.fields %}
                         <input type="hidden" name="{{ name }}" value="{{ value }}"/>
                     {% endif %}
                 {% endfor %}
 
-                {% include "dashboard/partials/form_fields_inline.html" with form=form %}
+                {% include "dashboard/partials/form_fields_inline.html" with form=filter.form %}
                 <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Searching...' %}"><i class="fas fa-search"></i> {% trans "Search" %}</button>
             </form>
         </div>

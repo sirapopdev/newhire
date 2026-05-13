@@ -39,12 +39,6 @@ class DashboardPostListView(
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = self.filterset.form
-        return context
-
-
 class DashboardPostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
@@ -90,11 +84,6 @@ class DashboardCategoryListView(LoginRequiredMixin, SingleTableMixin, FilterView
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = self.filterset.form
-        return context
-    
 class DashboardCategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm

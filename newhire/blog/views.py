@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
+from django.views.generic.edit import FormMixin
+from django.views.generic.edit import ProcessFormView
 from django.views.generic import DeleteView, DetailView, ListView
 from django.db.models import Q
 from .models import Category, Post, Comment
@@ -70,29 +72,27 @@ class TagPostListView(PostListView):
         return context
 
 
-class PostDetailView(DetailView):
+class PostDetailView(FormMixin, DetailView, ProcessFormView):
     model = Post
     template_name = 'blog/detail.html'
+    form_class = CommentForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = CommentForm()
-        return context
-    
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('account_login')
 
         self.object = self.get_object()
-        form = CommentForm(request.POST)
+        return super().post(request, *args, **kwargs)
 
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = self.object
-            comment.author = request.user
-            comment.save()
-        
-        return redirect('blogs:post-detail', slug=self.object.slug)
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.post = self.object
+        comment.author = self.request.user
+        comment.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
     
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):

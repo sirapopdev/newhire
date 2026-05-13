@@ -61,7 +61,7 @@
         </div>
     {% endblock %}
 
-    {% if has_posts %}
+    {% if posts.page.object_list %}
         {% block post_list %}
             <form method="post">
                 {% csrf_token %}

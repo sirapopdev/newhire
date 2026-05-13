@@ -28,7 +28,7 @@
 {% endblock header %}
 
 {% block dashboard_content %}
-    {% if has_comments %}
+    {% if comments.page.object_list %}
         {% block comment_list %}
             <form method="post">
                 {% csrf_token %}

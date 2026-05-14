@@ -45,3 +45,8 @@ restart:
 # pytest: Run pytest.
 pytest *args:
     @docker compose run --rm django pytest {{args}}
+
+# pytest-cov: Run pytest with coverage report and fail below 80%.
+pytest-cov *args:
+    @docker compose run --rm django coverage run -m pytest {{args}}
+    @docker compose run --rm django coverage report --fail-under=80

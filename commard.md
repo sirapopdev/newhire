@@ -14,4 +14,9 @@ just pytest newhire/blog/tests
 # run pytest for specific file
 just pytest newhire/blog/tests/test_models.py
 
+# run coverage
+just pytest-cov
+
+# run coverage for specific folder
+just pytest-cov newhire/blog/tests
 ```

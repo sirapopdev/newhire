@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
@@ -6,6 +8,8 @@ from newhire.dashboard.forms import MAX_FEATURED_IMAGE_SIZE
 from newhire.dashboard.forms import PostForm
 from newhire.factory.blogs import CategoryFactory
 from newhire.factory.blogs import TagFactory
+
+NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")
 
 
 class TestPostForm(TestCase):
@@ -65,6 +69,30 @@ class TestPostForm(TestCase):
 
         assert not form.is_valid()
         assert "featured_image" in form.errors
+
+    def test_clean_featured_image_returns_none_without_image(self):
+        form = PostForm(data=self.form_data)
+        form.is_valid()
+
+        assert form.clean_featured_image() is None
+
+    def test_clean_featured_image_returns_file_without_content_type(self):
+        form = PostForm(data=self.form_data)
+        form.cleaned_data = {"featured_image": object()}
+        image = form.cleaned_data["featured_image"]
+
+        assert form.clean_featured_image() == image
+
+    def test_featured_image_accepts_valid_image(self):
+        image = SimpleUploadedFile(
+            "test.png",
+            NO_IMAGE_PATH.read_bytes(),
+            content_type="image/png",
+        )
+        form = PostForm(data=self.form_data, files={"featured_image": image})
+
+        assert form.is_valid()
+        assert form.cleaned_data["featured_image"] == image
 
 
 class TestCategoryForm(TestCase):

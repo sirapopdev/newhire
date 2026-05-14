@@ -32,7 +32,7 @@ class TestPostListView(TestCase):
         response = self.client.get(self.url)
 
         assert response.status_code == 200
-        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert len(response.context["posts"]) == 10
         assert response.context["page_obj"].number == 1
 
     def test_first_page_returns_200(self):

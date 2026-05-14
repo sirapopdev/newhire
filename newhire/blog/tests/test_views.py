@@ -2,11 +2,13 @@ from django.test import TestCase
 from django.urls import reverse
 
 from newhire.blog.models import Comment
-from newhire.factory.blogs import CategoryFactory
-from newhire.factory.blogs import CommentFactory
-from newhire.factory.blogs import PostFactory
-from newhire.factory.blogs import TagFactory
-from newhire.factory.blogs import UserFactory
+from newhire.factory.blogs import (
+    CategoryFactory,
+    CommentFactory,
+    PostFactory,
+    TagFactory,
+    UserFactory
+)
 
 
 class TestPostListView(TestCase):

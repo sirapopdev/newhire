@@ -1,9 +1,7 @@
-from django.forms import TextInput
-from django.forms import Textarea
+from django.forms import TextInput, Textarea
 from django.test import TestCase
 
-from newhire.blog.forms import CommentForm
-from newhire.blog.forms import PostFilterForm
+from newhire.blog.forms import CommentForm, PostFilterForm
 from newhire.blog.models import Comment
 
 

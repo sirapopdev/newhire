@@ -2,11 +2,13 @@ from django.templatetags.static import static
 from django.test import TestCase
 from django.urls import reverse
 
-from newhire.factory.blogs import CategoryFactory
-from newhire.factory.blogs import CommentFactory
-from newhire.factory.blogs import PostFactory
-from newhire.factory.blogs import TagFactory
-from newhire.factory.blogs import UserFactory
+from newhire.factory.blogs import (
+    CategoryFactory,
+    CommentFactory,
+    PostFactory,
+    TagFactory,
+    UserFactory,
+)
 
 
 class TestCategoryModel(TestCase):
@@ -29,7 +31,7 @@ class TestTagModel(TestCase):
         assert str(self.tag) == "Python 3"
 
     def test_slug_is_generated_from_name(self):
-        assert self.tag.slug == "python"
+        assert self.tag.slug == "python-3"
         assert self.tag.slug == self.tag.name.lower().replace(" ", "-")
 
 

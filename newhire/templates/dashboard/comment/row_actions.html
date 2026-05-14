@@ -1,0 +1,6 @@
+{% load django_tables2 %}
+{% load i18n %}
+
+<a href="{% url 'dashboard_blogs:comment-delete' pk=record.id %}" class="btn btn-danger btn-sm">
+     {% trans "Delete" %}
+</a>

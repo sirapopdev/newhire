@@ -101,7 +101,7 @@ DJANGO_APPS = [
     'oscar.apps.search.apps.SearchConfig',
     'oscar.apps.voucher.apps.VoucherConfig',
     'oscar.apps.wishlists.apps.WishlistsConfig',
-    'oscar.apps.dashboard.apps.DashboardConfig',
+    'newhire.dashboard.apps.DashboardConfig',
     'oscar.apps.dashboard.reports.apps.ReportsDashboardConfig',
     'oscar.apps.dashboard.users.apps.UsersDashboardConfig',
     'oscar.apps.dashboard.orders.apps.OrdersDashboardConfig',
@@ -279,6 +279,7 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = ['https://newhire.gokeeper.app', 'http://newhire.gokeeper.app']
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
 
@@ -383,3 +384,26 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
+
+OSCAR_HOMEPAGE = reverse_lazy("blogs:post-list")
+
+OSCAR_DASHBOARD_NAVIGATION += [
+    {
+        "label": "Posts",
+        "icon": "fas fa-newspaper",
+        "url_name": "dashboard_blogs:post-list",
+        "access_fn": lambda user, url_name, url_args=None, url_kwargs=None: user.is_staff,
+    },
+    {
+        "label": "Categories",
+        "icon": "fas fa-list",
+        "url_name": "dashboard_blogs:category-list",
+        "access_fn": lambda user, url_name, url_args=None, url_kwargs=None: user.is_staff,
+    },
+    {
+        "label": "Comments",
+        "icon": "fas fa-comments",
+        "url_name": "dashboard_blogs:comment-list",
+        "access_fn": lambda user, url_name, url_args=None, url_kwargs=None: user.is_staff,
+    }
+]

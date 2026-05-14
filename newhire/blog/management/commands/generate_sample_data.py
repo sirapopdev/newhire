@@ -24,7 +24,7 @@ class Command(BaseCommand):
         Tag.objects.all().delete()
         Category.objects.all().delete()
         deleted_users_count, _ = User.objects.filter(
-            is_staff=False,
+            is_staff=True,
             is_superuser=False,
         ).delete()
 
@@ -68,10 +68,16 @@ class Command(BaseCommand):
     def _generate_posts(self, n=10):
         all_categories = Category.objects.all()
         all_tags = list(Tag.objects.all())
-        author, _ = User.objects.get_or_create(
+        author, created = User.objects.get_or_create(
             email=fake.email(),
-            defaults={"name": fake.name(), "password": "password123"},
+            defaults={
+                "name": fake.name(),
+                "is_staff": True,
+            },
         )
+        if created:
+            author.set_password("password123")
+            author.save(update_fields=["password"])
 
         for _ in range(n):
             title = fake.sentence(nb_words=6)
@@ -102,8 +108,3 @@ class Command(BaseCommand):
         self._generate_categories(n=5)
         self._generate_tags()
         self._generate_posts(n=options.get("n"))
-        # Category.objects.create(name="Django")
-
-        # self.stdout.write(
-        #     self.style.SUCCESS(f"N is {options.get('n')}")
-        # )

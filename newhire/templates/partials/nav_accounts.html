@@ -6,5 +6,37 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="container">
+        <div class="navbar-collapse account-collapse collapse">
+            <ul class="navbar-nav ml-md-auto d-md-flex">
+                {% if user.is_authenticated %}
+                {% block nav_account_navbar_authenticated %}
+                {% if user.is_staff or perms.partner.dashboard_access %}
+                <li class="nav-item mr-2">
+                    <a href="{% url 'dashboard_blogs:post-list' %}" class="nav-link">
+                        <i class="fas fa-list-ul mr-2"></i>
+                        {% trans "Dashboard" %}
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item mr-2">
+                    <form method="post" action="{% url 'dashboard:logout' %}">
+                        {% csrf_token %}
+                        <button id="logout_link" type="submit" class="btn btn-link nav-link">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            {% trans "Logout" %}
+                        </button>
+                    </form>
+                </li>
+                {% endblock %}
+                {% else %}
+                <li class="nav-item mr-2">
+                    <a id="login_link" href="{% url 'account_login' %}" class="nav-link">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        {% trans "Login or register" %}
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </nav>

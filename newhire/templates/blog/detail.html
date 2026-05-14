@@ -25,7 +25,9 @@
     <header class="post-detail__header">
         <div class="post-detail__meta">
             {% if object.category %}
-            <a class="post-detail__category" href="{% url 'blogs:post-category' object.category.slug %}">{{ object.category.name }}</a>
+            <a class="post-detail__category" href="{% url 'blogs:post-category' object.category.slug %}">
+                {{ object.category.name }}
+            </a>
             {% endif %}
             <span>{{ object.created_at|date:"M d, Y" }}</span>
             {% if object.author and object.author.name %}
@@ -57,16 +59,32 @@
             <div class="post-comment__meta">
                 {% if comment.author and comment.author.name %}
                 <span>{{ comment.author.name }}</span>
+                {% else %}
+                <span>{{ comment.author.email }}</span>
                 {% endif %}
                 <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M d, Y" }}</time>
             </div>
-            <div class="post-comment__body">
-                {{ comment.body|linebreaks }}
+            <div class="post-comment__body comment-body">
+                {{ comment.body|safe }}
             </div>
         </article>
         {% empty %}
         <p class="post-comments__empty">{% trans "No comments yet." %}</p>
         {% endfor %}
     </section>
+
+    {% if user.is_authenticated %}
+    <form method="post"  enctype="multipart/form-data" class="wysiwyg" novalidate>
+        {% csrf_token %}
+        {% include "dashboard/partials/form_fields.html" with form=form %}
+        <button type="submit">{% trans "Add comment" %}</button>
+    </form>
+    {% else %}
+    <p>
+        <a href="{% url 'account_login' %}">{% trans "Log in" %}</a>
+        {% trans "to add a comment." %}
+    </p>
+    {% endif %}
+
 </article>
 {% endblock %}

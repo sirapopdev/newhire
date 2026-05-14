@@ -1,7 +1,11 @@
-from django.views.generic import DetailView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.views.generic.edit import FormMixin
+from django.views.generic.edit import ProcessFormView
+from django.views.generic import DeleteView, DetailView, ListView
 from django.db.models import Q
-from .models import Category, Post, Tag
-from .forms import PostFilterForm
+from .models import Category, Post, Comment
+from .forms import CommentForm, PostFilterForm
 
 class PostListView(ListView):
     model = Post
@@ -68,6 +72,31 @@ class TagPostListView(PostListView):
         return context
 
 
-class PostDetailView(DetailView):
+class PostDetailView(FormMixin, DetailView, ProcessFormView):
     model = Post
     template_name = 'blog/detail.html'
+    form_class = CommentForm
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('account_login')
+
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.post = self.object
+        comment.author = self.request.user
+        comment.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+    
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()

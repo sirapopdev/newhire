@@ -12,10 +12,15 @@ from django.apps import apps
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
+    path('', include(apps.get_app_config('oscar').urls[0])),
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
         "blogs/",
         include("newhire.blog.urls", namespace="blogs"),
+    ),
+    path(
+        "dashboard/blogs/",
+        include("newhire.dashboard.urls", namespace="dashboard_blogs"),
     ),
     path(
         "about/",
@@ -29,7 +34,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
 
-    path('', include(apps.get_app_config('oscar').urls[0])),
+
 
     # ...
     # Media files

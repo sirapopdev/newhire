@@ -1,93 +1,145 @@
-import pytest
+from django.test import TestCase
 from django.urls import reverse
 
-from newhire.blog.models import Post, Category, Tag
 
-pytestmark = pytest.mark.django_db
+from newhire.factory.blogs import (
+    UserFactory, 
+    PostFactory, 
+    CategoryFactory,
+    TagFactory
+)
 
+class TestPostListView(TestCase):
+    PAGE_SIZE = 10
 
-def create_post(user, title="Test Post", status="published", category=None):
-    if category is None:
-        category = Category.objects.create(name=f"Test {title}")
+    def setUp(self):
+        self.user = UserFactory()
+        self.posts = [PostFactory(author=self.user) for _ in range(25)]
+        self.post_1 = PostFactory(author=self.user)
+        self.post_2 = PostFactory()
+        self.url = reverse("blogs:post-list")
+
+    def test_get_post_list(self):
+        response = self.client.get(self.url)
+
+        assert response.status_code == 200
+        assert self.post_1.title in response.content.decode()
+        assert self.post_2.title in response.content.decode()
+
+    def test_post_list_pagination(self):
+        response = self.client.get(self.url)
+
+        assert response.status_code == 200
+        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert response.context["page_obj"].number == 1
+
+    def test_first_page_returns_200(self):
+        response = self.client.get(self.url)
+
+        assert response.status_code == 200
+
+    def test_second_page_returns_200(self):
+        response = self.client.get(self.url + "?page=2")
+
+        assert response.status_code == 200
+        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert response.context["page_obj"].number == 2
+
+    def test_post_list_search_by_title(self):
+        matching_post = PostFactory(title="Django Search Result")
+        other_post = PostFactory(title="Python Article")
+
+        response = self.client.get(self.url + "?q=django")
+
+        assert response.status_code == 200
+        assert matching_post in response.context["posts"]
+        assert other_post not in response.context["posts"]
     
-    return Post.objects.create(
-        title=title,
-        body="Test Content",
-        author=user,
-        status=status,
-        category=category,
-    )
+    def test_post_list_search_by_body(self):
+        matching_post = PostFactory(body="Django Search Result")
+        PostFactory(body="Python Article")
+
+        response = self.client.get(self.url + "?q=django")
+
+        assert response.status_code == 200
+        assert matching_post in response.context["posts"]
+        assert "Python Article" not in response.context["posts"]
+
+    def test_post_list_search_by_author(self):
+        matching_post = PostFactory(author__name="Django Author")
+        PostFactory(author__name="Python Author")
+
+        response = self.client.get(self.url + "?q=django")
+
+        assert response.status_code == 200
+        assert matching_post in response.context["posts"]
+        assert "Python Article" not in response.context["posts"]
 
 
-def test_post_list_view_pagination(client, user):
-    for number in range(12):
-        create_post(user, title=f"Test Post {number}")
+class TestCategoryPostListView(TestCase):
+    def setUp(self):
+        self.category = CategoryFactory(name="Django")
+        self.other_category = CategoryFactory(name="Python")
+        self.post = PostFactory(category=self.category, title="Django Post")
+        self.other_post = PostFactory(category=self.other_category, title="Python Post")
+        self.url = reverse("blogs:post-category", args=[self.category.slug])
 
-    url = reverse("blogs:post-list")
-    response = client.get(url)
+    def test_get_category_post_list(self):
+        response = self.client.get(self.url)
 
-    assert response.status_code == 200
-    assert "page_obj" in response.context
-    assert response.context["is_paginated"] is True
+        assert response.status_code == 200
+        assert self.post in response.context["posts"]
+        assert self.other_post not in response.context["posts"]
+        assert response.context["selected_category_slug"] == self.category.slug
 
+    def test_get_category_post_list_with_invalid_category(self):
+        url = reverse("blogs:post-category", args=["invalid-category"])
+        response = self.client.get(url)
 
-def test_post_detail_view_by_slug(client, user):
-    post = create_post(user, title="My Detail Post")
+        assert response.status_code == 404
 
-    url = reverse("blogs:post-detail", args=[post.slug])
-    response = client.get(url)
+    def test_category_post_list_search_by_title(self):
+        matching_post = PostFactory(category=self.category, title="Django Search Result")
+        PostFactory(category=self.category, title="Python Article")
 
-    assert response.status_code == 200
-    assert response.context["post"] == post
+        response = self.client.get(self.url + "?q=django")
 
+        assert response.status_code == 200
+        assert matching_post in response.context["posts"]
+        assert "Python Article" not in response.context["posts"]
 
-def test_post_detail_view_returns_404_for_missing_slug(client):
-    url = reverse("blogs:post-detail", args=["missing-post"])
-    response = client.get(url)
+class TestTagPostListView(TestCase):
+    def setUp(self):
+        self.tag = TagFactory(name="Django")
+        self.other_tag = TagFactory(name="Python")
+        self.post = PostFactory(title="Django Post")
+        self.post.tags.add(self.tag)
+        self.other_post = PostFactory(title="Python Post")
+        self.other_post.tags.add(self.other_tag)
+        self.url = reverse("blogs:post-tag", args=[self.tag.slug])
 
-    assert response.status_code == 404
+    def test_get_tag_post_list(self):
+        response = self.client.get(self.url)
 
+        assert response.status_code == 200
+        assert self.post in response.context["posts"]
+        assert self.other_post not in response.context["posts"]
+        assert response.context["selected_tag_slug"] == self.tag.slug
 
-def test_post_list_can_filter_by_category(client, user):
-    django_category = Category.objects.create(name='Django Test')
-    python_category = Category.objects.create(name='Python Test')
+    def test_get_tag_post_list_with_invalid_tag(self):
+        url = reverse("blogs:post-tag", args=["invalid-tag"])
+        response = self.client.get(url)
 
-    django_post = create_post(user, title='Django Post', category=django_category)
-    python_post = create_post(user, title='Python Post', category=python_category)
+        assert response.status_code == 404
 
-    url = reverse('blogs:post-category', args=[django_category.slug]) 
-    response = client.get(url)
+    def test_tag_post_list_search_by_title(self):
+        matching_post = PostFactory(title="Django Search Result")
+        matching_post.tags.add(self.tag)
+        PostFactory(title="Python Article")
 
-    assert response.status_code == 200
-    assert django_post in response.context['posts']
-    assert python_post not in response.context['posts']
+        response = self.client.get(self.url + "?q=django")
 
+        assert response.status_code == 200
+        assert matching_post in response.context["posts"]
+        assert "Python Article" not in response.context["posts"]
 
-def test_post_list_can_filter_by_tag(client, user):
-    django_tag = Tag.objects.create(name='Django Test')
-    python_tag = Tag.objects.create(name='Python Test')
-
-    django_post = create_post(user, title='Django Post')
-    django_post.tags.add(django_tag)
-
-    python_post = create_post(user, title='Python Post')
-    python_post.tags.add(python_tag)
-
-    url = reverse('blogs:post-tag', args=[django_tag.slug])
-    response = client.get(url)
-
-    assert response.status_code == 200
-    assert django_post in response.context['posts']
-    assert python_post not in response.context['posts']
-
-
-def test_post_list_search_results(client, user):
-    django_post = create_post(user, title='Django Post')
-    python_post = create_post(user, title='Python Post')
-
-    url = reverse('blogs:post-list') + '?q=django'
-    response = client.get(url)
-
-    assert response.status_code == 200
-    assert django_post in response.context['posts']
-    assert python_post not in response.context['posts']

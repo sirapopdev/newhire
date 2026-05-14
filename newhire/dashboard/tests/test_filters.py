@@ -1,6 +1,4 @@
-from django.db import connection
 from django.test import TestCase
-from unittest import skipUnless
 
 from newhire.dashboard.filters import CategoryFilter
 from newhire.dashboard.filters import PostFilter
@@ -24,7 +22,6 @@ class TestCategoryFilter(TestCase):
         assert self.other_category not in category_filter.qs
 
 
-@skipUnless(connection.vendor == "postgresql", "PostFilter uses PostgreSQL full-text search")
 class TestPostFilter(TestCase):
     def setUp(self):
         self.matching_author = UserFactory(name="Django Author")

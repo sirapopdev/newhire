@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.routers import SimpleRouter
 
 from newhire.users.api.views import UserViewSet
-from newhire.blog.api.views import PostViewSet, CategoryViewSet, CommentViewSet
+from newhire.api.views import PostViewSet, CategoryViewSet, CommentViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 

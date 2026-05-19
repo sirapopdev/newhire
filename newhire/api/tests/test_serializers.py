@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from newhire.blog.api.serializers import CategorySerializer, CommentSerializer, PostSerializer
+from newhire.api.serializers import CategorySerializer, CommentSerializer, PostSerializer
 from newhire.factory.blogs import CategoryFactory, CommentFactory, PostFactory
 
 

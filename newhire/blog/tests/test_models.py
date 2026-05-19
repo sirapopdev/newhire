@@ -2,18 +2,12 @@ from django.templatetags.static import static
 from django.test import TestCase
 from django.urls import reverse
 
-from newhire.factory.blogs import (
-    CategoryFactory,
-    CommentFactory,
-    PostFactory,
-    TagFactory,
-    UserFactory,
-)
+from newhire.test import factories
 
 
 class TestCategoryModel(TestCase):
     def setUp(self):
-        self.category = CategoryFactory(name="Django Python")
+        self.category = factories.CategoryFactory(name="Django Python")
 
     def test_str_returns_name(self):
         assert str(self.category) == "Django Python"
@@ -25,7 +19,7 @@ class TestCategoryModel(TestCase):
 
 class TestTagModel(TestCase):
     def setUp(self):
-        self.tag = TagFactory(name="Python 3")
+        self.tag = factories.TagFactory(name="Python 3")
 
     def test_str_returns_name(self):
         assert str(self.tag) == "Python 3"
@@ -37,9 +31,9 @@ class TestTagModel(TestCase):
 
 class TestPostModel(TestCase):
     def setUp(self):
-        self.user = UserFactory()
-        self.category = CategoryFactory()
-        self.post = PostFactory(
+        self.user = factories.UserFactory()
+        self.category = factories.CategoryFactory()
+        self.post = factories.PostFactory(
             author=self.user,
             category=self.category,
             title="My Blog Post",
@@ -64,7 +58,7 @@ class TestPostModel(TestCase):
         assert self.post.featured_image_url == static("images/no-image.png")
 
     def test_post_can_have_tags(self):
-        tag = TagFactory()
+        tag = factories.TagFactory()
 
         self.post.tags.add(tag)
 
@@ -80,9 +74,9 @@ class TestPostModel(TestCase):
 
 class TestCommentModel(TestCase):
     def setUp(self):
-        self.user = UserFactory(name="John Doe")
-        self.post = PostFactory(title="My Blog Post")
-        self.comment = CommentFactory(post=self.post, author=self.user)
+        self.user = factories.UserFactory(name="John Doe")
+        self.post = factories.PostFactory(title="My Blog Post")
+        self.comment = factories.CommentFactory(post=self.post, author=self.user)
 
     def test_str_returns_author_and_post(self):
         assert str(self.comment) == f"Comment by {self.user} on {self.post}"

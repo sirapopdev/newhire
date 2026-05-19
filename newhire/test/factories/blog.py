@@ -4,7 +4,7 @@ from newhire.blog.models import Category
 from newhire.blog.models import Comment
 from newhire.blog.models import Post
 from newhire.blog.models import Tag
-from newhire.users.tests.factories import UserFactory
+from newhire.test.factories.user import UserFactory
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -25,14 +25,13 @@ class PostFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Post
 
+    class Params:
+        published = factory.Trait(status="published")
+
     author = factory.SubFactory(UserFactory)
     title = factory.Sequence(lambda number: f"Post {number}")
     body = "This is a sample post."
     category = factory.SubFactory(CategoryFactory)
-
-
-class PublishedPostFactory(PostFactory):
-    status = "published"
 
 
 class CommentFactory(factory.django.DjangoModelFactory):

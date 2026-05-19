@@ -6,8 +6,7 @@ from django.test import TestCase
 from newhire.dashboard.forms import CategoryForm
 from newhire.dashboard.forms import MAX_FEATURED_IMAGE_SIZE
 from newhire.dashboard.forms import PostForm
-from newhire.factory.blogs import CategoryFactory
-from newhire.factory.blogs import TagFactory
+from newhire.test import factories
 
 NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")
 FIXTURE_PATH = Path(__file__).resolve().parents[1] / "fixtures"
@@ -15,8 +14,8 @@ FIXTURE_PATH = Path(__file__).resolve().parents[1] / "fixtures"
 
 class TestPostForm(TestCase):
     def setUp(self):
-        self.category = CategoryFactory()
-        self.tag = TagFactory()
+        self.category = factories.CategoryFactory()
+        self.tag = factories.TagFactory()
         self.form = PostForm
 
     def test_post_form_is_valid(self):

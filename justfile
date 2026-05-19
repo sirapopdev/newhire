@@ -50,3 +50,16 @@ pytest *args:
 pytest-cov *args:
     @docker compose run --rm django coverage run -m pytest {{args}}
     @docker compose run --rm django coverage report --fail-under=80
+
+# isort: Sort Python imports. Usage: just isort [path]
+isort *args:
+    @docker compose run --rm django uv run isort {{ if args == "" { "." } else { args } }}
+
+# flake8: Run flake8 lint. Usage: just flake8 [path]
+flake8 *args:
+    @docker compose run --rm django uv run flake8 {{ if args == "" { "." } else { args } }}
+
+# lint: Run import sorting and flake8. Usage: just lint [path]
+lint *args:
+    @docker compose run --rm django uv run isort {{ if args == "" { "." } else { args } }}
+    @docker compose run --rm django uv run flake8 {{ if args == "" { "." } else { args } }}

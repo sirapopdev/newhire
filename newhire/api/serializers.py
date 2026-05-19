@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from newhire.blog.models import Category, Post, Comment
+from newhire.blog.models import Category, Comment, Post
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,6 +10,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=25)
+    body = serializers.CharField(max_length=100)
+
     class Meta:
         model = Post
         fields = "__all__"

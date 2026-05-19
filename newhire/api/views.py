@@ -1,18 +1,17 @@
 from rest_framework.decorators import action
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from newhire.blog.models import Post, Category, Comment
-
-from .serializers import PostSerializer, CategorySerializer, CommentSerializer
-
+from .serializers import CategorySerializer, CommentSerializer, PostSerializer
+from newhire.blog.models import Category, Comment, Post
 
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

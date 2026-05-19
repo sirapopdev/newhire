@@ -1,21 +1,18 @@
 from django.test import TestCase
 
-from newhire.dashboard.filters import CategoryFilter
-from newhire.dashboard.filters import PostFilter
-from newhire.factory.blogs import CategoryFactory
-from newhire.factory.blogs import PostFactory
-from newhire.factory.blogs import UserFactory
+from newhire.dashboard.filters import CategoryFilter, PostFilter
+from newhire.test import factories
 
 
 class TestCategoryFilter(TestCase):
     def setUp(self):
-        self.matching_category = CategoryFactory(name="Django")
-        self.other_category = CategoryFactory(name="Python")
+        self.matching_category = factories.CategoryFactory(name="Django")
+        self.other_category = factories.CategoryFactory(name="Python")
 
     def test_filter_q_searches_category_name(self):
         category_filter = CategoryFilter(
             data={"q": "django"},
-            queryset=CategoryFactory._meta.model.objects.all(),
+            queryset=factories.CategoryFactory._meta.model.objects.all(),
         )
 
         assert self.matching_category in category_filter.qs
@@ -24,16 +21,16 @@ class TestCategoryFilter(TestCase):
 
 class TestPostFilter(TestCase):
     def setUp(self):
-        self.matching_author = UserFactory(name="Django Author")
-        self.matching_title_post = PostFactory(title="Django Tips")
-        self.matching_body_post = PostFactory(body="Django Content")
-        self.matching_author_post = PostFactory(author=self.matching_author)
-        self.other_post = PostFactory(title="Python Tips", body="Python Content")
+        self.matching_author = factories.UserFactory(name="Django Author")
+        self.matching_title_post = factories.PostFactory(title="Django Tips")
+        self.matching_body_post = factories.PostFactory(body="Django Content")
+        self.matching_author_post = factories.PostFactory(author=self.matching_author)
+        self.other_post = factories.PostFactory(title="Python Tips", body="Python Content")
 
     def test_filter_q_searches_title_body_and_author_name(self):
         post_filter = PostFilter(
             data={"q": "django"},
-            queryset=PostFactory._meta.model.objects.all(),
+            queryset=factories.PostFactory._meta.model.objects.all(),
         )
 
         assert self.matching_title_post in post_filter.qs

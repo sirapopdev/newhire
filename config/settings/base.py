@@ -1,10 +1,11 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
-from pathlib import Path
-from oscar.defaults import *
 import os
+from pathlib import Path
+
 import environ
+from oscar.defaults import *
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # newhire/

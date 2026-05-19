@@ -1,16 +1,14 @@
 from django.test import TestCase
 
 from newhire.dashboard.tables import PostTable
-from newhire.factory.blogs import CategoryFactory
-from newhire.factory.blogs import PostFactory
-from newhire.factory.blogs import UserFactory
+from newhire.test import factories
 
 
 class TestPostTable(TestCase):
     def setUp(self):
-        self.category = CategoryFactory(name="Django")
-        self.user = UserFactory(name="John Doe", email="john@example.com")
-        self.post = PostFactory(
+        self.category = factories.CategoryFactory(name="Django")
+        self.user = factories.UserFactory(name="John Doe", email="john@example.com")
+        self.post = factories.PostFactory(
             author=self.user,
             category=self.category,
             status="published",

@@ -2,23 +2,15 @@ from django.test import TestCase
 from django.urls import reverse
 
 from newhire.blog.models import Comment
-from newhire.factory.blogs import (
-    CategoryFactory,
-    CommentFactory,
-    PostFactory,
-    TagFactory,
-    UserFactory
-)
+from newhire.test import factories
 
 
 class TestPostListView(TestCase):
-    PAGE_SIZE = 10
-
     def setUp(self):
-        self.user = UserFactory()
-        self.posts = [PostFactory(author=self.user) for _ in range(25)]
-        self.post_1 = PostFactory(author=self.user)
-        self.post_2 = PostFactory()
+        self.user = factories.UserFactory()
+        self.posts = [factories.PostFactory(author=self.user) for _ in range(25)]
+        self.post_1 = factories.PostFactory(author=self.user)
+        self.post_2 = factories.PostFactory()
         self.url = reverse("blogs:post-list")
 
     def test_get_post_list(self):
@@ -32,7 +24,7 @@ class TestPostListView(TestCase):
         response = self.client.get(self.url)
 
         assert response.status_code == 200
-        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert len(response.context["posts"]) == 10
         assert response.context["page_obj"].number == 1
 
     def test_first_page_returns_200(self):
@@ -44,22 +36,22 @@ class TestPostListView(TestCase):
         response = self.client.get(self.url + "?page=2")
 
         assert response.status_code == 200
-        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert len(response.context["posts"]) == 10
         assert response.context["page_obj"].number == 2
 
     def test_post_list_search_by_title(self):
-        matching_post = PostFactory(title="Django Search Result")
-        other_post = PostFactory(title="Python Article")
+        matching_post = factories.PostFactory(title="Django Search Result")
+        other_post = factories.PostFactory(title="Python Article")
 
         response = self.client.get(self.url + "?q=django")
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
         assert other_post not in response.context["posts"]
-    
+
     def test_post_list_search_by_body(self):
-        matching_post = PostFactory(body="Django Search Result")
-        other_post = PostFactory(body="Python Article")
+        matching_post = factories.PostFactory(body="Django Search Result")
+        other_post = factories.PostFactory(body="Python Article")
 
         response = self.client.get(self.url + "?q=django")
 
@@ -68,8 +60,8 @@ class TestPostListView(TestCase):
         assert other_post not in response.context["posts"]
 
     def test_post_list_search_by_author(self):
-        matching_post = PostFactory(author__name="Django Author")
-        other_post = PostFactory(author__name="Python Author")
+        matching_post = factories.PostFactory(author__name="Django Author")
+        other_post = factories.PostFactory(author__name="Python Author")
 
         response = self.client.get(self.url + "?q=django")
 
@@ -80,10 +72,10 @@ class TestPostListView(TestCase):
 
 class TestCategoryPostListView(TestCase):
     def setUp(self):
-        self.category = CategoryFactory(name="Django")
-        self.other_category = CategoryFactory(name="Python")
-        self.post = PostFactory(category=self.category, title="Django Post")
-        self.other_post = PostFactory(category=self.other_category, title="Python Post")
+        self.category = factories.CategoryFactory(name="Django")
+        self.other_category = factories.CategoryFactory(name="Python")
+        self.post = factories.PostFactory(category=self.category, title="Django Post")
+        self.other_post = factories.PostFactory(category=self.other_category, title="Python Post")
         self.url = reverse("blogs:post-category", args=[self.category.slug])
 
     def test_get_category_post_list(self):
@@ -102,8 +94,8 @@ class TestCategoryPostListView(TestCase):
         assert len(response.context["posts"]) == 0
 
     def test_category_post_list_search_by_title(self):
-        matching_post = PostFactory(category=self.category, title="Django Search Result")
-        other_post = PostFactory(category=self.category, title="Python Article")
+        matching_post = factories.PostFactory(category=self.category, title="Django Search Result")
+        other_post = factories.PostFactory(category=self.category, title="Python Article")
 
         response = self.client.get(self.url + "?q=django")
 
@@ -114,11 +106,11 @@ class TestCategoryPostListView(TestCase):
 
 class TestTagPostListView(TestCase):
     def setUp(self):
-        self.tag = TagFactory(name="Django")
-        self.other_tag = TagFactory(name="Python")
-        self.post = PostFactory(title="Django Post")
+        self.tag = factories.TagFactory(name="Django")
+        self.other_tag = factories.TagFactory(name="Python")
+        self.post = factories.PostFactory(title="Django Post")
         self.post.tags.add(self.tag)
-        self.other_post = PostFactory(title="Python Post")
+        self.other_post = factories.PostFactory(title="Python Post")
         self.other_post.tags.add(self.other_tag)
         self.url = reverse("blogs:post-tag", args=[self.tag.slug])
 
@@ -138,9 +130,9 @@ class TestTagPostListView(TestCase):
         assert len(response.context["posts"]) == 0
 
     def test_tag_post_list_search_by_title(self):
-        matching_post = PostFactory(title="Django Search Result")
+        matching_post = factories.PostFactory(title="Django Search Result")
         matching_post.tags.add(self.tag)
-        other_post = PostFactory(title="Python Article")
+        other_post = factories.PostFactory(title="Python Article")
         other_post.tags.add(self.tag)
 
         response = self.client.get(self.url + "?q=django")
@@ -152,8 +144,8 @@ class TestTagPostListView(TestCase):
 
 class TestPostDetailView(TestCase):
     def setUp(self):
-        self.user = UserFactory()
-        self.post = PostFactory(title="Test Post", body="Test Content")
+        self.user = factories.UserFactory()
+        self.post = factories.PostFactory(title="Test Post", body="Test Content")
         self.url = reverse("blogs:post-detail", args=[self.post.slug])
 
     def test_get_post_detail(self):
@@ -169,7 +161,7 @@ class TestPostDetailView(TestCase):
         assert response.status_code == 404
 
     def test_authenticated_user_can_create_comment(self):
-        commenter = UserFactory()
+        commenter = factories.UserFactory()
         self.client.force_login(commenter)
         comment_data = {"body": "Test Comment"}
 
@@ -192,9 +184,9 @@ class TestPostDetailView(TestCase):
 
 class TestCommentDeleteView(TestCase):
     def setUp(self):
-        self.user = UserFactory()
-        self.post = PostFactory(author=self.user)
-        self.comment = CommentFactory(post=self.post)
+        self.user = factories.UserFactory()
+        self.post = factories.PostFactory(author=self.user)
+        self.comment = factories.CommentFactory(post=self.post)
         self.url = reverse("blogs:comment-delete", args=[self.comment.pk])
 
     def test_authenticated_user_can_delete_comment(self):

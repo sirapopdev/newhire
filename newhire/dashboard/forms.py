@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from newhire.blog.models import Post, Category
+from newhire.blog.models import Category, Post
 
 MAX_FEATURED_IMAGE_SIZE = 5 * 1024 * 1024
 ALLOWED_FEATURED_IMAGE_TYPES = {
@@ -48,7 +48,8 @@ class PostForm(forms.ModelForm):
             )
 
         return image
-    
+
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category

@@ -1,9 +1,8 @@
 import django_filters
-from django.contrib.postgres.search import SearchQuery
-from django.contrib.postgres.search import SearchVector
 
-from newhire.blog.models import Category
-from newhire.blog.models import Post
+from django.contrib.postgres.search import SearchQuery, SearchVector
+
+from newhire.blog.models import Category, Post
 
 
 class PostFilter(django_filters.FilterSet):

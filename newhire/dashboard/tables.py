@@ -1,11 +1,10 @@
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ngettext_lazy
 from django_tables2 import A, Column, TemplateColumn
-
 from oscar.core.loading import get_class
 
-from newhire.blog.models import Post, Category, Comment
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _, ngettext_lazy
+
+from newhire.blog.models import Category, Comment, Post
 
 DashboardTable = get_class("dashboard.tables", "DashboardTable")
 
@@ -65,6 +64,7 @@ class PostTable(DashboardTable):
     def render_author(self, record):
         return record.author.name or record.author.email
 
+
 class CategoryTable(DashboardTable):
     name = Column(
         verbose_name=_("Name"),
@@ -89,13 +89,13 @@ class CategoryTable(DashboardTable):
         )
         order_by = "name"
         per_page = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
-    
+
 
 class CommentTable(DashboardTable):
     body = Column(
         verbose_name=_("Comment"),
         accessor=A("body"),
-        orderable=False,        
+        orderable=False,
     )
     author = Column(
         verbose_name=_("Commenter"),
@@ -107,7 +107,7 @@ class CommentTable(DashboardTable):
         accessor=A("post"),
         orderable=False,
     )
-  
+
     created_at = Column(
         verbose_name=_("Created At"),
         accessor=A("created_at"),
@@ -117,7 +117,7 @@ class CommentTable(DashboardTable):
         template_name="dashboard/comment/row_actions.html",
         verbose_name=_("Actions"),
         orderable=False,
-    )       
+    )
 
     icon = "fas fa-comments"
     caption = ngettext_lazy("%s Comment", "%s Comments")

@@ -1,22 +1,17 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from newhire.blog.models import Post, Category, Comment
-from newhire.factory.blogs import (
-    CategoryFactory,
-    CommentFactory,
-    PostFactory,
-    UserFactory
-)
+from newhire.blog.models import Category, Comment, Post
+from newhire.test import factories
 
 
 class TestStaffRequiredMixin(TestCase):
     def setUp(self):
-        self.user = UserFactory(is_staff=False)
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory()
-        self.post = PostFactory(author=self.staff_user, category=self.category)
-        self.comment = CommentFactory(post=self.post)
+        self.user = factories.UserFactory(is_staff=False)
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory()
+        self.post = factories.PostFactory(author=self.staff_user, category=self.category)
+        self.comment = factories.CommentFactory(post=self.post)
         self.urls = [
             reverse("dashboard_blogs:post-list"),
             reverse("dashboard_blogs:post-create"),
@@ -56,10 +51,10 @@ class TestStaffRequiredMixin(TestCase):
 
 class TestIndexView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.categories = [CategoryFactory() for _ in range(5)]
-        self.posts = [PostFactory(category=self.categories[0]) for _ in range(15)]
-        self.comments = [CommentFactory(post=self.posts[0]) for _ in range(10)]
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.categories = [factories.CategoryFactory() for _ in range(5)]
+        self.posts = [factories.PostFactory(category=self.categories[0]) for _ in range(15)]
+        self.comments = [factories.CommentFactory(post=self.posts[0]) for _ in range(10)]
         self.url = reverse("dashboard:index")
 
     def test_get_index_view_context(self):
@@ -75,10 +70,10 @@ class TestIndexView(TestCase):
 
 class TestDashboardPostListView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory()
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory()
         self.posts = [
-            PostFactory(author=self.staff_user, category=self.category)
+            factories.PostFactory(author=self.staff_user, category=self.category)
             for _ in range(15)
         ]
         self.url = reverse("dashboard_blogs:post-list")
@@ -94,10 +89,11 @@ class TestDashboardPostListView(TestCase):
         for post in self.posts:
             assert post in table_posts
 
+
 class TestDashboardPostCreateView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory()
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory()
         self.url = reverse("dashboard_blogs:post-create")
 
     def test_get_post_create_view_context(self):
@@ -119,7 +115,6 @@ class TestDashboardPostCreateView(TestCase):
             "tags": [],
         }
 
-
         response = self.client.post(self.url, data=data)
 
         assert response.status_code == 302
@@ -129,11 +124,12 @@ class TestDashboardPostCreateView(TestCase):
         assert Post.objects.first().category == self.category
         assert Post.objects.first().author == self.staff_user
 
+
 class TestDashboardPostEditView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory()
-        self.post = PostFactory(author=self.staff_user, category=self.category)
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory()
+        self.post = factories.PostFactory(author=self.staff_user, category=self.category)
         self.url = reverse("dashboard_blogs:post-edit", args=[self.post.pk])
 
     def test_get_post_edit_view_context(self):
@@ -167,10 +163,11 @@ class TestDashboardPostEditView(TestCase):
         assert self.post.category == self.category
         assert self.post.author == self.staff_user
 
+
 class TestDashboardPostDeleteView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.post = PostFactory(author=self.staff_user)
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.post = factories.PostFactory(author=self.staff_user)
         self.url = reverse("dashboard_blogs:post-delete", args=[self.post.pk])
 
     def test_get_post_delete_view_context(self):
@@ -192,8 +189,8 @@ class TestDashboardPostDeleteView(TestCase):
 
 class TestDashboardCategoryListView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.categories = [CategoryFactory() for _ in range(5)]
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.categories = [factories.CategoryFactory() for _ in range(5)]
         self.url = reverse("dashboard_blogs:category-list")
 
     def test_get_category_list_view_context(self):
@@ -210,7 +207,7 @@ class TestDashboardCategoryListView(TestCase):
 
 class TestDashboardCategoryCreateView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
+        self.staff_user = factories.UserFactory(is_staff=True)
         self.url = reverse("dashboard_blogs:category-create")
 
     def test_get_category_create_view_context(self):
@@ -234,8 +231,8 @@ class TestDashboardCategoryCreateView(TestCase):
 
 class TestDashboardCategoryEditView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory(name="Django")
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory(name="Django")
         self.url = reverse("dashboard_blogs:category-edit", args=[self.category.pk])
 
     def test_get_category_edit_view_context(self):
@@ -260,8 +257,8 @@ class TestDashboardCategoryEditView(TestCase):
 
 class TestDashboardCategoryDeleteView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.category = CategoryFactory()
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.category = factories.CategoryFactory()
         self.url = reverse("dashboard_blogs:category-delete", args=[self.category.pk])
 
     def test_get_category_delete_view_context(self):
@@ -283,12 +280,12 @@ class TestDashboardCategoryDeleteView(TestCase):
 
 class TestDashboardCommentListView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.other_user = UserFactory()
-        self.post = PostFactory(author=self.staff_user)
-        self.other_post = PostFactory(author=self.other_user)
-        self.comment = CommentFactory(post=self.post)
-        self.other_comment = CommentFactory(post=self.other_post)
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.other_user = factories.UserFactory()
+        self.post = factories.PostFactory(author=self.staff_user)
+        self.other_post = factories.PostFactory(author=self.other_user)
+        self.comment = factories.CommentFactory(post=self.post)
+        self.other_comment = factories.CommentFactory(post=self.other_post)
         self.url = reverse("dashboard_blogs:comment-list")
 
     def test_get_comment_list_view_context(self):
@@ -305,9 +302,9 @@ class TestDashboardCommentListView(TestCase):
 
 class TestDashboardCommentDeleteView(TestCase):
     def setUp(self):
-        self.staff_user = UserFactory(is_staff=True)
-        self.post = PostFactory(author=self.staff_user)
-        self.comment = CommentFactory(post=self.post)
+        self.staff_user = factories.UserFactory(is_staff=True)
+        self.post = factories.PostFactory(author=self.staff_user)
+        self.comment = factories.CommentFactory(post=self.post)
         self.url = reverse("dashboard_blogs:comment-delete", args=[self.comment.pk])
 
     def test_get_comment_delete_view_context(self):

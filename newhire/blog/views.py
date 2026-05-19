@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.views.generic.edit import FormMixin
-from django.views.generic.edit import ProcessFormView
-from django.views.generic import DeleteView, DetailView, ListView
 from django.db.models import Q
-from .models import Category, Post, Comment
+from django.shortcuts import redirect
+from django.views.generic import DeleteView, DetailView, ListView
+from django.views.generic.edit import FormMixin, ProcessFormView
+
 from .forms import CommentForm, PostFilterForm
+from .models import Category, Comment, Post
+
 
 class PostListView(ListView):
     model = Post
@@ -23,7 +24,7 @@ class PostListView(ListView):
                 posts = posts.filter(
                     Q(title__icontains=query) |
                     Q(body__icontains=query) |
-                    Q(author__name__icontains=query) 
+                    Q(author__name__icontains=query)
                 )
 
         return posts
@@ -94,7 +95,7 @@ class PostDetailView(FormMixin, DetailView, ProcessFormView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-    
+
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment

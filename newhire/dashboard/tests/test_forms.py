@@ -3,8 +3,7 @@ from pathlib import Path
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from newhire.dashboard.forms import (MAX_FEATURED_IMAGE_SIZE, CategoryForm,
-                                     PostForm)
+from newhire.dashboard.forms import CategoryForm, PostForm
 from newhire.test import factories
 
 NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")
@@ -54,7 +53,7 @@ class TestPostForm(TestCase):
             (FIXTURE_PATH / "test.gif").read_bytes(),
             content_type="image/gif",
         )
-        data={
+        data = {
             "title": "Test Post",
             "body": "Test Content",
             "status": "published",
@@ -76,7 +75,7 @@ class TestPostForm(TestCase):
             image_content,
             content_type="image/jpeg",
         )
-        data={
+        data = {
             "title": "Test Post",
             "body": "Test Content",
             "status": "published",

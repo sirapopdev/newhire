@@ -64,6 +64,7 @@ class PostTable(DashboardTable):
     def render_author(self, record):
         return record.author.name or record.author.email
 
+
 class CategoryTable(DashboardTable):
     name = Column(
         verbose_name=_("Name"),
@@ -88,13 +89,13 @@ class CategoryTable(DashboardTable):
         )
         order_by = "name"
         per_page = settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE
-    
+
 
 class CommentTable(DashboardTable):
     body = Column(
         verbose_name=_("Comment"),
         accessor=A("body"),
-        orderable=False,        
+        orderable=False,
     )
     author = Column(
         verbose_name=_("Commenter"),
@@ -106,7 +107,7 @@ class CommentTable(DashboardTable):
         accessor=A("post"),
         orderable=False,
     )
-  
+
     created_at = Column(
         verbose_name=_("Created At"),
         accessor=A("created_at"),
@@ -116,7 +117,7 @@ class CommentTable(DashboardTable):
         template_name="dashboard/comment/row_actions.html",
         verbose_name=_("Actions"),
         orderable=False,
-    )       
+    )
 
     icon = "fas fa-comments"
     caption = ngettext_lazy("%s Comment", "%s Comments")

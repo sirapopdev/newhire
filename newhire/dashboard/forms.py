@@ -48,7 +48,8 @@ class PostForm(forms.ModelForm):
             )
 
         return image
-    
+
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category

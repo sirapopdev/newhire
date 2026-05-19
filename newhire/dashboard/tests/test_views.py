@@ -89,6 +89,7 @@ class TestDashboardPostListView(TestCase):
         for post in self.posts:
             assert post in table_posts
 
+
 class TestDashboardPostCreateView(TestCase):
     def setUp(self):
         self.staff_user = factories.UserFactory(is_staff=True)
@@ -114,7 +115,6 @@ class TestDashboardPostCreateView(TestCase):
             "tags": [],
         }
 
-
         response = self.client.post(self.url, data=data)
 
         assert response.status_code == 302
@@ -123,6 +123,7 @@ class TestDashboardPostCreateView(TestCase):
         assert Post.objects.first().body == "Test Content"
         assert Post.objects.first().category == self.category
         assert Post.objects.first().author == self.staff_user
+
 
 class TestDashboardPostEditView(TestCase):
     def setUp(self):
@@ -161,6 +162,7 @@ class TestDashboardPostEditView(TestCase):
         assert self.post.status == "published"
         assert self.post.category == self.category
         assert self.post.author == self.staff_user
+
 
 class TestDashboardPostDeleteView(TestCase):
     def setUp(self):

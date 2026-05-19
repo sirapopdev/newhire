@@ -22,7 +22,8 @@ class PostViewSet(ModelViewSet):
         comments = post.comments.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-    
+
+
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -34,6 +35,7 @@ class CategoryViewSet(ModelViewSet):
         posts = category.posts.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()

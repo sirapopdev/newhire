@@ -1,7 +1,8 @@
 from django.test import TestCase
 
-from newhire.api.serializers import CategorySerializer, CommentSerializer, PostSerializer
-from newhire.factory.blogs import CategoryFactory, CommentFactory, PostFactory
+from newhire.api.serializers import (CategorySerializer, CommentSerializer,
+                                     PostSerializer)
+from newhire.test.factories import CategoryFactory, CommentFactory, PostFactory
 
 
 class TestCategorySerializer(TestCase):
@@ -41,6 +42,26 @@ class TestPostSerializer(TestCase):
 
         assert serializer.is_valid()
         assert "author" not in serializer.validated_data
+
+    def test_title_cannot_exceed_25_characters(self):
+        serializer = PostSerializer(data={
+            "title": "x" * 26,
+            "body": "Body",
+            "category": self.post.category.id,
+        })
+
+        assert not serializer.is_valid()
+        assert "title" in serializer.errors
+
+    def test_body_cannot_exceed_100_characters(self):
+        serializer = PostSerializer(data={
+            "title": "New Post",
+            "body": "x" * 101,
+            "category": self.post.category.id,
+        })
+
+        assert not serializer.is_valid()
+        assert "body" in serializer.errors
 
 
 class TestCommentSerializer(TestCase):

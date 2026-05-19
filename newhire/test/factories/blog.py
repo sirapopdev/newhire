@@ -3,6 +3,7 @@ import factory
 from newhire.blog.models import Category, Comment, Post, Tag
 from newhire.test.factories.user import UserFactory
 
+
 class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Category

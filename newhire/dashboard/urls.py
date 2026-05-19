@@ -1,16 +1,10 @@
 from django.urls import path
-from .views import (
-    DashboardPostCreateView, 
-    DashboardPostListView, 
-    DashboardPostEditView,
-    DashboardPostDeleteView,
-    DashboardCategoryListView,
-    DashboardCategoryCreateView,
-    DashboardCategoryEditView,
-    DashboardCategoryDeleteView,
-    DashboardCommentListView,
-    DashboardCommentDeleteView,
-)
+
+from .views import (DashboardCategoryCreateView, DashboardCategoryDeleteView,
+                    DashboardCategoryEditView, DashboardCategoryListView,
+                    DashboardCommentDeleteView, DashboardCommentListView,
+                    DashboardPostCreateView, DashboardPostDeleteView,
+                    DashboardPostEditView, DashboardPostListView)
 
 app_name = 'dashboard_blogs'
 

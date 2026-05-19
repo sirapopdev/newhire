@@ -1,11 +1,10 @@
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ngettext_lazy
 from django_tables2 import A, Column, TemplateColumn
-
 from oscar.core.loading import get_class
 
-from newhire.blog.models import Post, Category, Comment
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _, ngettext_lazy
+
+from newhire.blog.models import Category, Comment, Post
 
 DashboardTable = get_class("dashboard.tables", "DashboardTable")
 

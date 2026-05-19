@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.views.generic.edit import FormMixin
-from django.views.generic.edit import ProcessFormView
-from django.views.generic import DeleteView, DetailView, ListView
 from django.db.models import Q
-from .models import Category, Post, Comment
+from django.shortcuts import redirect
+from django.views.generic import DeleteView, DetailView, ListView
+from django.views.generic.edit import FormMixin, ProcessFormView
+
 from .forms import CommentForm, PostFilterForm
+from .models import Category, Comment, Post
+
 
 class PostListView(ListView):
     model = Post

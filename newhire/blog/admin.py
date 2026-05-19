@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Category, Tag, Post, Comment
+from .models import Category, Comment, Post, Tag
 
 
 class CategoryAdmin(admin.ModelAdmin):

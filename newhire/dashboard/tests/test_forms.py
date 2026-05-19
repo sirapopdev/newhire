@@ -3,9 +3,8 @@ from pathlib import Path
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from newhire.dashboard.forms import CategoryForm
-from newhire.dashboard.forms import MAX_FEATURED_IMAGE_SIZE
-from newhire.dashboard.forms import PostForm
+from newhire.dashboard.forms import (MAX_FEATURED_IMAGE_SIZE, CategoryForm,
+                                     PostForm)
 from newhire.test import factories
 
 NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")

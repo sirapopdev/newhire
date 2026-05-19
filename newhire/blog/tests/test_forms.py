@@ -1,4 +1,4 @@
-from django.forms import TextInput, Textarea
+from django.forms import Textarea, TextInput
 from django.test import TestCase
 
 from newhire.blog.forms import CommentForm, PostFilterForm

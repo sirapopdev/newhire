@@ -1,7 +1,6 @@
 from django.test import TestCase
 
-from newhire.dashboard.filters import CategoryFilter
-from newhire.dashboard.filters import PostFilter
+from newhire.dashboard.filters import CategoryFilter, PostFilter
 from newhire.test import factories
 
 

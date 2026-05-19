@@ -1,7 +1,9 @@
-from django.db import models
-from django.urls import reverse
-from django.templatetags.static import static
 from oscar.models.fields import AutoSlugField
+
+from django.db import models
+from django.templatetags.static import static
+from django.urls import reverse
+
 
 # Create your models here.
 class Category(models.Model):

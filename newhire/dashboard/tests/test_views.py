@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from newhire.blog.models import Post, Category, Comment
+from newhire.blog.models import Category, Comment, Post
 from newhire.test import factories
 
 

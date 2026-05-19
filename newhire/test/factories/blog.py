@@ -1,11 +1,7 @@
 import factory
 
-from newhire.blog.models import Category
-from newhire.blog.models import Comment
-from newhire.blog.models import Post
-from newhire.blog.models import Tag
+from newhire.blog.models import Category, Comment, Post, Tag
 from newhire.test.factories.user import UserFactory
-
 
 class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:

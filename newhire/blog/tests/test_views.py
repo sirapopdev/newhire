@@ -48,7 +48,7 @@ class TestPostListView(TestCase):
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
         assert other_post not in response.context["posts"]
-    
+
     def test_post_list_search_by_body(self):
         matching_post = factories.PostFactory(body="Django Search Result")
         other_post = factories.PostFactory(body="Python Article")

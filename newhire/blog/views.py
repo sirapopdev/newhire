@@ -24,7 +24,7 @@ class PostListView(ListView):
                 posts = posts.filter(
                     Q(title__icontains=query) |
                     Q(body__icontains=query) |
-                    Q(author__name__icontains=query) 
+                    Q(author__name__icontains=query)
                 )
 
         return posts
@@ -95,7 +95,7 @@ class PostDetailView(FormMixin, DetailView, ProcessFormView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-    
+
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment

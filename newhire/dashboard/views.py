@@ -1,18 +1,23 @@
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView, UpdateView, DeleteView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin, SingleTableView
 from oscar.apps.dashboard.views import IndexView as OscarIndexView
 
-from newhire.blog.models import Category, Post, Comment
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import CreateView, DeleteView, UpdateView
 
 from .filters import CategoryFilter, PostFilter
 from .forms import CategoryForm, PostForm
 from .tables import CategoryTable, CommentTable, PostTable
+from newhire.blog.models import Category, Comment, Post
+
+
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class IndexView(OscarIndexView):
@@ -25,7 +30,7 @@ class IndexView(OscarIndexView):
 
 
 class DashboardPostListView(
-    LoginRequiredMixin, SingleTableMixin, FilterView
+    StaffRequiredMixin, SingleTableMixin, FilterView
 ):
     template_name = 'dashboard/post/list.html'
     model = Post
@@ -39,7 +44,8 @@ class DashboardPostListView(
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
-class DashboardPostCreateView(LoginRequiredMixin, CreateView):
+
+class DashboardPostCreateView(StaffRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post/form.html"
@@ -49,8 +55,9 @@ class DashboardPostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         messages.success(self.request, _("Post created successfully."))
         return super().form_valid(form)
-    
-class DashboardPostEditView(LoginRequiredMixin, UpdateView):
+
+
+class DashboardPostEditView(StaffRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post/form.html"
@@ -61,7 +68,7 @@ class DashboardPostEditView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class DashboardPostDeleteView(LoginRequiredMixin, DeleteView):
+class DashboardPostDeleteView(StaffRequiredMixin, DeleteView):
     model = Post
     template_name = "dashboard/post/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:post-list")
@@ -69,9 +76,9 @@ class DashboardPostDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _("Post deleted successfully."))
         return super().delete(request, *args, **kwargs)
-    
 
-class DashboardCategoryListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+
+class DashboardCategoryListView(StaffRequiredMixin, SingleTableMixin, FilterView):
     template_name = 'dashboard/category/list.html'
     model = Category
     table_class = CategoryTable
@@ -84,7 +91,8 @@ class DashboardCategoryListView(LoginRequiredMixin, SingleTableMixin, FilterView
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
-class DashboardCategoryCreateView(LoginRequiredMixin, CreateView):
+
+class DashboardCategoryCreateView(StaffRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = "dashboard/category/form.html"
@@ -93,8 +101,9 @@ class DashboardCategoryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         messages.success(self.request, _("Category created successfully."))
         return super().form_valid(form)
-    
-class DashboardCategoryEditView(LoginRequiredMixin, UpdateView):
+
+
+class DashboardCategoryEditView(StaffRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = "dashboard/category/form.html"
@@ -103,9 +112,9 @@ class DashboardCategoryEditView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, _("Category updated successfully."))
         return super().form_valid(form)
-    
 
-class DashboardCategoryDeleteView(LoginRequiredMixin, DeleteView):
+
+class DashboardCategoryDeleteView(StaffRequiredMixin, DeleteView):
     model = Category
     template_name = "dashboard/category/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:category-list")
@@ -113,8 +122,9 @@ class DashboardCategoryDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _("Category deleted successfully."))
         return super().delete(request, *args, **kwargs)
-    
-class DashboardCommentListView(LoginRequiredMixin, SingleTableView):
+
+
+class DashboardCommentListView(StaffRequiredMixin, SingleTableView):
     template_name = 'dashboard/comment/list.html'
     model = Comment
     table_class = CommentTable
@@ -125,8 +135,9 @@ class DashboardCommentListView(LoginRequiredMixin, SingleTableView):
 
     def get_table_pagination(self, table):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
-    
-class DashboardCommentDeleteView(LoginRequiredMixin, DeleteView):
+
+
+class DashboardCommentDeleteView(StaffRequiredMixin, DeleteView):
     model = Comment
     template_name = "dashboard/comment/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:comment-list")

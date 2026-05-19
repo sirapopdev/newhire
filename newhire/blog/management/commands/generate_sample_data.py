@@ -1,11 +1,11 @@
+import faker_commerce
+from faker import Faker
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from faker import Faker
-import faker_commerce
 
 from newhire.blog.models import Category, Post, Tag
-
 
 fake = Faker()
 fake.add_provider(faker_commerce.Provider)

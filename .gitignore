@@ -277,3 +277,4 @@ newhire/media/
 !.envs/.local/
 
 .vscode/
+.backup

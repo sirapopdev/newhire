@@ -1,7 +1,9 @@
-from django.db import models
-from django.urls import reverse
-from django.templatetags.static import static
 from oscar.models.fields import AutoSlugField
+
+from django.db import models
+from django.templatetags.static import static
+from django.urls import reverse
+
 
 # Create your models here.
 class Category(models.Model):
@@ -10,13 +12,15 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=255)
     slug = AutoSlugField(populate_from='name', editable=True, unique=True, max_length=255)
 
     def __str__(self):
         return self.name
+
 
 class Post(models.Model):
     STATUS_CHOICES = (
@@ -40,7 +44,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('blogs:post-detail', args=[str(self.slug)])
-    
+
     class Meta:
         ordering = ['-updated_at']
 
@@ -50,6 +54,7 @@ class Post(models.Model):
             return self.featured_image.url
 
         return static('images/no-image.png')
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

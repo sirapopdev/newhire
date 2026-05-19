@@ -10,27 +10,29 @@ from newhire.factory.blogs import CategoryFactory
 from newhire.factory.blogs import TagFactory
 
 NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")
+FIXTURE_PATH = Path(__file__).resolve().parents[1] / "fixtures"
 
 
 class TestPostForm(TestCase):
     def setUp(self):
         self.category = CategoryFactory()
         self.tag = TagFactory()
-        self.form_data = {
+        self.form = PostForm
+
+    def test_post_form_is_valid(self):
+        data = {
             "title": "Test Post",
             "body": "Test Content",
             "status": "published",
             "category": self.category.pk,
             "tags": [self.tag.pk],
         }
-
-    def test_post_form_is_valid(self):
-        form = PostForm(data=self.form_data)
+        form = self.form(data=data)
 
         assert form.is_valid()
 
     def test_post_form_fields(self):
-        form = PostForm()
+        form = self.form(data={})
 
         assert list(form.fields) == [
             "title",
@@ -42,7 +44,7 @@ class TestPostForm(TestCase):
         ]
 
     def test_post_form_widgets(self):
-        form = PostForm()
+        form = self.form(data={})
 
         assert form.fields["body"].widget.attrs["class"] == "wysiwyg"
         assert form.fields["body"].widget.attrs["rows"] == 16
@@ -50,34 +52,69 @@ class TestPostForm(TestCase):
 
     def test_featured_image_rejects_invalid_content_type(self):
         image = SimpleUploadedFile(
-            "test.txt",
-            b"not an image",
-            content_type="text/plain",
+            "test.gif",
+            (FIXTURE_PATH / "test.gif").read_bytes(),
+            content_type="image/gif",
         )
-        form = PostForm(data=self.form_data, files={"featured_image": image})
+        data={
+            "title": "Test Post",
+            "body": "Test Content",
+            "status": "published",
+            "category": self.category.pk,
+            "tags": [self.tag.pk],
+        }
+        form = self.form(data=data, files={"featured_image": image})
 
         assert not form.is_valid()
         assert "featured_image" in form.errors
+        error = form.errors.as_data()["featured_image"][0]
+        assert error.code == "invalid_image_type"
+        assert str(error.message) == "Upload a JPEG, PNG, or WebP image."
 
     def test_featured_image_rejects_large_file(self):
+        image_content = (FIXTURE_PATH / "test.jpg").read_bytes()
         image = SimpleUploadedFile(
-            "test.png",
-            b"a" * (MAX_FEATURED_IMAGE_SIZE + 1),
-            content_type="image/png",
+            "test.jpg",
+            image_content,
+            content_type="image/jpeg",
         )
-        form = PostForm(data=self.form_data, files={"featured_image": image})
+        data={
+            "title": "Test Post",
+            "body": "Test Content",
+            "status": "published",
+            "category": self.category.pk,
+            "tags": [self.tag.pk],
+        }
+        form = self.form(data=data, files={"featured_image": image})
 
         assert not form.is_valid()
         assert "featured_image" in form.errors
+        error = form.errors.as_data()["featured_image"][0]
+        assert error.code == "image_too_large"
+        assert str(error.message) == "Featured image must be 5 MB or smaller."
 
     def test_clean_featured_image_returns_none_without_image(self):
-        form = PostForm(data=self.form_data)
-        form.is_valid()
+        data = {
+            "title": "Test Post",
+            "body": "Test Content",
+            "status": "published",
+            "category": self.category.pk,
+            "tags": [self.tag.pk],
+        }
+        form = self.form(data=data)
 
+        assert form.is_valid() is True
         assert form.clean_featured_image() is None
 
     def test_clean_featured_image_returns_file_without_content_type(self):
-        form = PostForm(data=self.form_data)
+        data = {
+            "title": "Test Post",
+            "body": "Test Content",
+            "status": "published",
+            "category": self.category.pk,
+            "tags": [self.tag.pk],
+        }
+        form = self.form(data=data)
         form.cleaned_data = {"featured_image": object()}
         image = form.cleaned_data["featured_image"]
 
@@ -89,7 +126,14 @@ class TestPostForm(TestCase):
             NO_IMAGE_PATH.read_bytes(),
             content_type="image/png",
         )
-        form = PostForm(data=self.form_data, files={"featured_image": image})
+        data = {
+            "title": "Test Post",
+            "body": "Test Content",
+            "status": "published",
+            "category": self.category.pk,
+            "tags": [self.tag.pk],
+        }
+        form = self.form(data=data, files={"featured_image": image})
 
         assert form.is_valid()
         assert form.cleaned_data["featured_image"] == image

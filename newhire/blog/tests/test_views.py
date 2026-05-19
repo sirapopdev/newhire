@@ -12,8 +12,6 @@ from newhire.factory.blogs import (
 
 
 class TestPostListView(TestCase):
-    PAGE_SIZE = 10
-
     def setUp(self):
         self.user = UserFactory()
         self.posts = [PostFactory(author=self.user) for _ in range(25)]
@@ -44,7 +42,7 @@ class TestPostListView(TestCase):
         response = self.client.get(self.url + "?page=2")
 
         assert response.status_code == 200
-        assert len(response.context["posts"]) == self.PAGE_SIZE
+        assert len(response.context["posts"]) == 10
         assert response.context["page_obj"].number == 2
 
     def test_post_list_search_by_title(self):

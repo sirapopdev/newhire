@@ -5,6 +5,7 @@ from oscar.apps.dashboard.views import IndexView as OscarIndexView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, UpdateView
@@ -68,14 +69,11 @@ class DashboardPostEditView(StaffRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class DashboardPostDeleteView(StaffRequiredMixin, DeleteView):
+class DashboardPostDeleteView(SuccessMessageMixin, StaffRequiredMixin, DeleteView):
     model = Post
     template_name = "dashboard/post/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:post-list")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, _("Post deleted successfully."))
-        return super().delete(request, *args, **kwargs)
+    success_message = _("Post deleted successfully.")
 
 
 class DashboardCategoryListView(StaffRequiredMixin, SingleTableMixin, FilterView):
@@ -114,14 +112,11 @@ class DashboardCategoryEditView(StaffRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class DashboardCategoryDeleteView(StaffRequiredMixin, DeleteView):
+class DashboardCategoryDeleteView(SuccessMessageMixin, StaffRequiredMixin, DeleteView):
     model = Category
     template_name = "dashboard/category/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:category-list")
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, _("Category deleted successfully."))
-        return super().delete(request, *args, **kwargs)
+    success_message = _("Category deleted successfully.")
 
 
 class DashboardCommentListView(StaffRequiredMixin, SingleTableView):
@@ -137,7 +132,8 @@ class DashboardCommentListView(StaffRequiredMixin, SingleTableView):
         return {"per_page": settings.OSCAR_DASHBOARD_ITEMS_PER_PAGE}
 
 
-class DashboardCommentDeleteView(StaffRequiredMixin, DeleteView):
+class DashboardCommentDeleteView(SuccessMessageMixin, StaffRequiredMixin, DeleteView):
     model = Comment
     template_name = "dashboard/comment/confirm_delete.html"
     success_url = reverse_lazy("dashboard_blogs:comment-list")
+    success_message = _("Comment deleted successfully.")

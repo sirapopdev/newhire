@@ -13,10 +13,14 @@ class PostListView(ListView):
     template_name = 'blog/list.html'
     context_object_name = "posts"
     paginate_by = 10
+    queryset = Post.objects.filter(status='published')
+
+    def get_public_queryset(self):
+        return Post.objects.filter(status='published')
 
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET)
-        posts = Post.objects.all()
+        posts = self.get_public_queryset()
 
         if self.form.is_valid():
             query = self.form.cleaned_data.get('q')
@@ -33,7 +37,7 @@ class PostListView(ListView):
         context = super().get_context_data(**kwargs)
         context.update({
             'blog_categories': Category.objects.all(),
-            'recent_posts': Post.objects.all()[:5],
+            'recent_posts': self.get_public_queryset()[:5],
         })
         context['form'] = self.form
         return context
@@ -42,7 +46,7 @@ class PostListView(ListView):
 class CategoryPostListView(PostListView):
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET)
-        posts = Post.objects.filter(category__slug=self.kwargs['slug'])
+        posts = self.get_public_queryset().filter(category__slug=self.kwargs['slug'])
         if self.form.is_valid():
             query = self.form.cleaned_data.get('q')
             if query:
@@ -59,7 +63,7 @@ class CategoryPostListView(PostListView):
 class TagPostListView(PostListView):
     def get_queryset(self):
         self.form = PostFilterForm(self.request.GET)
-        posts = Post.objects.filter(tags__slug=self.kwargs['slug'])
+        posts = self.get_public_queryset().filter(tags__slug=self.kwargs['slug'])
 
         if self.form.is_valid():
             query = self.form.cleaned_data.get('q')
@@ -78,6 +82,7 @@ class PostDetailView(FormMixin, DetailView, ProcessFormView):
     model = Post
     template_name = 'blog/detail.html'
     form_class = CommentForm
+    queryset = Post.objects.filter(status='published')
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -99,6 +104,9 @@ class PostDetailView(FormMixin, DetailView, ProcessFormView):
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
+
+    def get_queryset(self):
+        return Comment.objects.select_related("post").filter(author=self.request.user)
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()

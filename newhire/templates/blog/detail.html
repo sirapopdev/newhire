@@ -67,6 +67,14 @@
             <div class="post-comment__body comment-body">
                 {{ comment.body|safe }}
             </div>
+            {% if user.is_authenticated %}
+                {% if user == comment.author %}
+                <form method="post" action="{% url 'blogs:comment-delete' comment.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">{% trans "Delete" %}</button>
+                </form>
+                {% endif %}
+            {% endif %}
         </article>
         {% empty %}
         <p class="post-comments__empty">{% trans "No comments yet." %}</p>

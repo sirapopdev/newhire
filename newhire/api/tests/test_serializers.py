@@ -43,9 +43,9 @@ class TestPostSerializer(TestCase):
         assert serializer.is_valid()
         assert "author" not in serializer.validated_data
 
-    def test_title_cannot_exceed_25_characters(self):
+    def test_title_uses_model_max_length(self):
         serializer = PostSerializer(data={
-            "title": "x" * 26,
+            "title": "x" * 256,
             "body": "Body",
             "category": self.post.category.id,
         })
@@ -53,15 +53,15 @@ class TestPostSerializer(TestCase):
         assert not serializer.is_valid()
         assert "title" in serializer.errors
 
-    def test_body_cannot_exceed_100_characters(self):
+    def test_body_accepts_long_text(self):
         serializer = PostSerializer(data={
             "title": "New Post",
             "body": "x" * 101,
             "category": self.post.category.id,
         })
 
-        assert not serializer.is_valid()
-        assert "body" in serializer.errors
+        assert serializer.is_valid()
+        assert serializer.validated_data["body"] == "x" * 101
 
 
 class TestCommentSerializer(TestCase):

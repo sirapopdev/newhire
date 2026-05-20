@@ -10,9 +10,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=25)
-    body = serializers.CharField(max_length=100)
-
     class Meta:
         model = Post
         fields = "__all__"

@@ -18,7 +18,6 @@ class PostFilterForm(forms.Form):
 class CommentForm(forms.ModelForm):
     body = forms.CharField(
         label='Comment',
-        required=False,
         widget=forms.Textarea(attrs={
             'class': 'wysiwyg',
             'rows': 4,

@@ -214,6 +214,17 @@ class TestPostDetailView(TestCase):
         assert response.url == self.post.get_absolute_url()
         assert comment.body == "Test Comment"
 
+    def test_authenticated_user_cannot_create_empty_comment(self):
+        commenter = factories.UserFactory()
+        self.client.force_login(commenter)
+
+        response = self.client.post(self.url, {"body": ""})
+
+        assert response.status_code == 200
+        assert "form" in response.context
+        assert "body" in response.context["form"].errors
+        assert not Comment.objects.filter(post=self.post, author=commenter).exists()
+
     def test_unauthenticated_user_cannot_create_comment(self):
         comment_data = {"body": "Test Comment"}
 

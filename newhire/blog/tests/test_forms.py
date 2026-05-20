@@ -43,11 +43,11 @@ class TestCommentForm(TestCase):
     def setUp(self):
         self.form = CommentForm
 
-    def test_body_field_is_optional(self):
+    def test_body_field_is_required(self):
         form = self.form(data={})
 
-        assert form.is_valid()
-        assert form.cleaned_data["body"] == ""
+        assert not form.is_valid()
+        assert "body" in form.errors
 
     def test_body_field_accepts_comment_text(self):
         form = self.form(data={"body": "Nice post!"})
@@ -60,7 +60,7 @@ class TestCommentForm(TestCase):
         field = form.fields["body"]
 
         assert field.label == "Comment"
-        assert field.required is False
+        assert field.required is True
         assert isinstance(field.widget, Textarea)
         assert field.widget.attrs["class"] == "wysiwyg"
         assert field.widget.attrs["rows"] == 4

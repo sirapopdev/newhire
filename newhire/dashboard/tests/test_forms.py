@@ -1,10 +1,12 @@
 from io import BytesIO
 
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
 from PIL import Image
 
-from newhire.dashboard.forms import MAX_FEATURED_IMAGE_SIZE, CategoryForm, PostForm
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
+
+from newhire.dashboard.forms import (MAX_FEATURED_IMAGE_SIZE, CategoryForm,
+                                     PostForm)
 from newhire.test import factories
 
 

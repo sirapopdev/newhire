@@ -19,6 +19,8 @@ uv sync
 # create app
 just manage startapp dashboard
 
+python ../manage.py startapp api
+
 # generate sample data
 just manage generate_sample_data --n 100
 

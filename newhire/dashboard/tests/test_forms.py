@@ -1,17 +1,33 @@
-from pathlib import Path
+from io import BytesIO
+
+from PIL import Image
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from newhire.dashboard.forms import CategoryForm, PostForm
+from newhire.dashboard.forms import (MAX_FEATURED_IMAGE_SIZE, CategoryForm,
+                                     PostForm)
 from newhire.test import factories
 
-NO_IMAGE_PATH = Path("newhire/static/images/no-image.png")
-FIXTURE_PATH = Path(__file__).resolve().parents[1] / "fixtures"
+
+def uploaded_image(
+    name="test.png",
+    image_format="PNG",
+    content_type="image/png",
+    extra_bytes=b"",
+):
+    image_file = BytesIO()
+    Image.new("RGB", (1, 1), color="white").save(image_file, image_format)
+    return SimpleUploadedFile(
+        name,
+        image_file.getvalue() + extra_bytes,
+        content_type=content_type,
+    )
 
 
 class TestPostForm(TestCase):
     def setUp(self):
+        self.user = factories.UserFactory()
         self.category = factories.CategoryFactory()
         self.tag = factories.TagFactory()
         self.form = PostForm
@@ -27,6 +43,16 @@ class TestPostForm(TestCase):
         form = self.form(data=data)
 
         assert form.is_valid()
+
+        form.instance.author = self.user
+        post = form.save()
+
+        assert post.title == "Test Post"
+        assert post.body == "Test Content"
+        assert post.status == "published"
+        assert post.category == self.category
+        assert post.author == self.user
+        assert list(post.tags.all()) == [self.tag]
 
     def test_post_form_fields(self):
         form = self.form(data={})
@@ -48,9 +74,9 @@ class TestPostForm(TestCase):
         assert form.fields["tags"].widget.attrs["class"] == "select2"
 
     def test_featured_image_rejects_invalid_content_type(self):
-        image = SimpleUploadedFile(
+        image = uploaded_image(
             "test.gif",
-            (FIXTURE_PATH / "test.gif").read_bytes(),
+            image_format="GIF",
             content_type="image/gif",
         )
         data = {
@@ -69,11 +95,10 @@ class TestPostForm(TestCase):
         assert str(error.message) == "Upload a JPEG, PNG, or WebP image."
 
     def test_featured_image_rejects_large_file(self):
-        image_content = (FIXTURE_PATH / "test.jpg").read_bytes()
-        image = SimpleUploadedFile(
-            "test.jpg",
-            image_content,
-            content_type="image/jpeg",
+        image = uploaded_image(
+            "test.png",
+            extra_bytes=b"x" * (MAX_FEATURED_IMAGE_SIZE + 1),
+            content_type="image/png",
         )
         data = {
             "title": "Test Post",
@@ -118,9 +143,8 @@ class TestPostForm(TestCase):
         assert form.clean_featured_image() == image
 
     def test_featured_image_accepts_valid_image(self):
-        image = SimpleUploadedFile(
+        image = uploaded_image(
             "test.png",
-            NO_IMAGE_PATH.read_bytes(),
             content_type="image/png",
         )
         data = {

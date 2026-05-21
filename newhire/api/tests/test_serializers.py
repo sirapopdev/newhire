@@ -12,9 +12,11 @@ class TestCategorySerializer(TestCase):
     def test_serializes_category_fields(self):
         data = CategorySerializer(self.category).data
 
-        assert data["id"] == self.category.id
-        assert data["name"] == "Django"
-        assert data["slug"] == self.category.slug
+        assert data == {
+            "id": self.category.id,
+            "name": "Django",
+            "slug": self.category.slug,
+        }
 
 
 class TestPostSerializer(TestCase):

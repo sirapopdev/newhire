@@ -45,7 +45,8 @@ class TestPostApiViewSet(TestCase):
         user = UserFactory()
         category = CategoryFactory()
         self.client.force_login(user)
-
+        
+        post_count = Post.objects.count()
         response = self.client.post(self.url, {
             "title": "New Post",
             "body": "New Body",
@@ -54,6 +55,7 @@ class TestPostApiViewSet(TestCase):
         })
 
         assert response.status_code == status.HTTP_201_CREATED
+        assert Post.objects.count() == post_count + 1
         assert Post.objects.get(title="New Post").author == user
 
     def test_authenticated_user_cannot_create_post_with_long_title(self):
@@ -69,7 +71,7 @@ class TestPostApiViewSet(TestCase):
         })
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "title" in response.data
+        assert response.data == {"title": ["Ensure this field has no more than 255 characters."]}
 
     def test_authenticated_user_can_create_post_with_long_body(self):
         user = UserFactory()
@@ -77,6 +79,7 @@ class TestPostApiViewSet(TestCase):
         self.client.force_login(user)
         body = "x" * 101
 
+        post_count = Post.objects.count()
         response = self.client.post(self.url, {
             "title": "New Post",
             "body": body,
@@ -85,6 +88,7 @@ class TestPostApiViewSet(TestCase):
         })
 
         assert response.status_code == status.HTTP_201_CREATED
+        assert Post.objects.count() == post_count + 1
         assert response.data["body"] == body
 
     def test_authenticated_user_cannot_update_post_with_long_title(self):
@@ -99,7 +103,7 @@ class TestPostApiViewSet(TestCase):
         }, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "title" in response.data
+        assert response.data == {"title": ["Ensure this field has no more than 255 characters."]}
 
     def test_authenticated_user_can_update_post_with_long_body(self):
         user = UserFactory()
@@ -148,9 +152,11 @@ class TestCategoryApiViewSet(TestCase):
         user = UserFactory()
         self.client.force_login(user)
 
+        category_count = Category.objects.count()
         response = self.client.post(self.url, {"name": "Python"})
 
         assert response.status_code == status.HTTP_201_CREATED
+        assert Category.objects.count() == category_count + 1
         assert Category.objects.filter(name="Python").exists()
 
 
@@ -177,10 +183,12 @@ class TestCommentApiViewSet(TestCase):
         post = PostFactory()
         self.client.force_login(user)
 
+        comment_count = Comment.objects.count()
         response = self.client.post(self.url, {
             "post": post.id,
             "body": "New comment",
         })
 
         assert response.status_code == status.HTTP_201_CREATED
+        assert Comment.objects.count() == comment_count + 1
         assert Comment.objects.get(body="New comment").author == user

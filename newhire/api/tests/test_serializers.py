@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from django.test import TestCase
 
 from newhire.api.serializers import (CategorySerializer, CommentSerializer,
@@ -26,13 +28,19 @@ class TestPostSerializer(TestCase):
     def test_serializes_post_fields(self):
         data = PostSerializer(self.post).data
 
-        assert data["id"] == self.post.id
-        assert data["title"] == "API Post"
-        assert data["slug"] == self.post.slug
-        assert data["body"] == self.post.body
-        assert data["status"] == self.post.status
-        assert data["category"] == self.post.category.id
-        assert data["author"] == self.post.author.id
+        assert data == {
+            "id": self.post.id,
+            "title": "API Post",
+            "slug": self.post.slug,
+            "body": self.post.body,
+            "featured_image": None,
+            "status": self.post.status,
+            "created_at": ANY,
+            "updated_at": ANY,
+            "category": self.post.category.id,
+            "tags": [],
+            "author": self.post.author.id,
+        }
 
     def test_author_is_read_only(self):
         serializer = PostSerializer(data={
@@ -73,10 +81,13 @@ class TestCommentSerializer(TestCase):
     def test_serializes_comment_fields(self):
         data = CommentSerializer(self.comment).data
 
-        assert data["id"] == self.comment.id
-        assert data["post"] == self.comment.post.id
-        assert data["author"] == self.comment.author.id
-        assert data["body"] == "Nice post"
+        assert data == {
+            "id": self.comment.id,
+            "post": self.comment.post.id,
+            "author": self.comment.author.id,
+            "body": "Nice post",
+            "created_at": ANY,
+        }
 
     def test_author_is_read_only(self):
         serializer = CommentSerializer(data={

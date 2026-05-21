@@ -62,7 +62,7 @@ class TestPostApiViewSet(TestCase):
         self.client.force_login(user)
 
         response = self.client.post(self.url, {
-            "title": "x" * 26,
+            "title": "x" * 256,
             "body": "New Body",
             "status": "draft",
             "category": category.id,
@@ -71,27 +71,28 @@ class TestPostApiViewSet(TestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "title" in response.data
 
-    def test_authenticated_user_cannot_create_post_with_long_body(self):
+    def test_authenticated_user_can_create_post_with_long_body(self):
         user = UserFactory()
         category = CategoryFactory()
         self.client.force_login(user)
+        body = "x" * 101
 
         response = self.client.post(self.url, {
             "title": "New Post",
-            "body": "x" * 101,
+            "body": body,
             "status": "draft",
             "category": category.id,
         })
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "body" in response.data
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["body"] == body
 
     def test_authenticated_user_cannot_update_post_with_long_title(self):
         user = UserFactory()
         self.client.force_login(user)
 
         response = self.client.put(self.detail_url, {
-            "title": "x" * 26,
+            "title": "x" * 256,
             "body": "Updated Body",
             "status": "draft",
             "category": self.post.category.id,
@@ -100,19 +101,20 @@ class TestPostApiViewSet(TestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "title" in response.data
 
-    def test_authenticated_user_cannot_update_post_with_long_body(self):
+    def test_authenticated_user_can_update_post_with_long_body(self):
         user = UserFactory()
         self.client.force_login(user)
+        body = "x" * 101
 
         response = self.client.put(self.detail_url, {
             "title": "Updated Post",
-            "body": "x" * 101,
+            "body": body,
             "status": "draft",
             "category": self.post.category.id,
         }, content_type="application/json")
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "body" in response.data
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["body"] == body
 
 
 class TestCategoryApiViewSet(TestCase):

@@ -8,7 +8,7 @@ from newhire.test import factories
 class TestPostListView(TestCase):
     def setUp(self):
         self.user = factories.UserFactory()
-        self.posts = [factories.PostFactory(author=self.user, published=True) for _ in range(25)]
+        self.posts = factories.PostFactory.create_batch(25, author=self.user, published=True)
         self.post_1 = factories.PostFactory(author=self.user, published=True)
         self.post_2 = factories.PostFactory(published=True)
         self.url = reverse("blogs:post-list")
@@ -42,7 +42,7 @@ class TestPostListView(TestCase):
         assert response.status_code == 200
 
     def test_second_page_returns_200(self):
-        response = self.client.get(self.url + "?page=2")
+        response = self.client.get(self.url, data={"page": 2})
 
         assert response.status_code == 200
         assert len(response.context["posts"]) == 10
@@ -52,7 +52,7 @@ class TestPostListView(TestCase):
         matching_post = factories.PostFactory(title="Django Search Result", published=True)
         other_post = factories.PostFactory(title="Python Article", published=True)
 
-        response = self.client.get(self.url + "?q=django")
+        response = self.client.get(self.url, data={"q": "django"})
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
@@ -62,7 +62,7 @@ class TestPostListView(TestCase):
         matching_post = factories.PostFactory(body="Django Search Result", published=True)
         other_post = factories.PostFactory(body="Python Article", published=True)
 
-        response = self.client.get(self.url + "?q=django")
+        response = self.client.get(self.url, data={"q": "django"})
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
@@ -72,7 +72,7 @@ class TestPostListView(TestCase):
         matching_post = factories.PostFactory(author__name="Django Author", published=True)
         other_post = factories.PostFactory(author__name="Python Author", published=True)
 
-        response = self.client.get(self.url + "?q=django")
+        response = self.client.get(self.url, data={"q": "django"})
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
@@ -122,7 +122,7 @@ class TestCategoryPostListView(TestCase):
             published=True,
         )
 
-        response = self.client.get(self.url + "?q=django")
+        response = self.client.get(self.url, data={"q": "django"})
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]
@@ -169,7 +169,7 @@ class TestTagPostListView(TestCase):
         other_post = factories.PostFactory(title="Python Article", published=True)
         other_post.tags.add(self.tag)
 
-        response = self.client.get(self.url + "?q=django")
+        response = self.client.get(self.url, data={"q": "django"})
 
         assert response.status_code == 200
         assert matching_post in response.context["posts"]

@@ -52,9 +52,9 @@ class TestStaffRequiredMixin(TestCase):
 class TestIndexView(TestCase):
     def setUp(self):
         self.staff_user = factories.UserFactory(is_staff=True)
-        self.categories = [factories.CategoryFactory() for _ in range(5)]
-        self.posts = [factories.PostFactory(category=self.categories[0]) for _ in range(15)]
-        self.comments = [factories.CommentFactory(post=self.posts[0]) for _ in range(10)]
+        self.categories = factories.CategoryFactory.create_batch(5)
+        self.posts = factories.PostFactory.create_batch(15, category=self.categories[0])
+        self.comments = factories.CommentFactory.create_batch(10, post=self.posts[0])
         self.url = reverse("dashboard:index")
 
     def test_get_index_view_context(self):
@@ -72,10 +72,7 @@ class TestDashboardPostListView(TestCase):
     def setUp(self):
         self.staff_user = factories.UserFactory(is_staff=True)
         self.category = factories.CategoryFactory()
-        self.posts = [
-            factories.PostFactory(author=self.staff_user, category=self.category)
-            for _ in range(15)
-        ]
+        self.posts = factories.PostFactory.create_batch(15, author=self.staff_user, category=self.category)
         self.url = reverse("dashboard_blogs:post-list")
 
     def test_get_post_list_view_context(self):
@@ -190,7 +187,7 @@ class TestDashboardPostDeleteView(TestCase):
 class TestDashboardCategoryListView(TestCase):
     def setUp(self):
         self.staff_user = factories.UserFactory(is_staff=True)
-        self.categories = [factories.CategoryFactory() for _ in range(5)]
+        self.categories = factories.CategoryFactory.create_batch(5)
         self.url = reverse("dashboard_blogs:category-list")
 
     def test_get_category_list_view_context(self):
